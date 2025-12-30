@@ -171,7 +171,67 @@
         }
 
         /* =========================================
-           6. UTILITIES & CURSOR
+           6. SIGNATURE PANEL (KEREM)
+        ========================================= */
+        #kerem-signature {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 500;
+            font-family: var(--font-cyber);
+            text-align: right;
+        }
+
+        .sig-container {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            padding: 12px 25px;
+            border-radius: 15px;
+            border-right: 4px solid var(--primary);
+            box-shadow: -10px 10px 30px rgba(0,0,0,0.5);
+            transition: all 0.4s ease;
+        }
+
+        .sig-container:hover {
+            transform: translateY(-5px) scale(1.02);
+            background: rgba(0, 242, 255, 0.1);
+            border-right: 4px solid #fff;
+            box-shadow: -15px 15px 40px rgba(0, 242, 255, 0.2);
+        }
+
+        .sig-text {
+            font-size: 0.65rem;
+            letter-spacing: 2px;
+            color: var(--primary);
+            margin-bottom: 5px;
+            display: block;
+            text-transform: uppercase;
+        }
+
+        .sig-main {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .sig-insta {
+            text-decoration: none;
+            color: #fff;
+            font-size: 0.75rem;
+            opacity: 0.6;
+            transition: 0.3s;
+        }
+
+        .sig-insta:hover {
+            opacity: 1;
+            color: var(--secondary);
+        }
+
+        /* =========================================
+           7. UTILITIES & CURSOR
         ========================================= */
         .cursor-ring {
             position: fixed; width: 40px; height: 40px;
@@ -180,21 +240,11 @@
             transition: transform 0.15s ease-out;
         }
 
-        .cursor-dot {
-            position: fixed; width: 40px; height: 40px;
-            background: var(--primary); border-radius: 50%;
-            pointer-events: none; z-index: 9999;
-            mix-blend-mode: difference;
-        }
-
         @keyframes pulse-title {
             0%, 100% { transform: scale(1); filter: brightness(1); }
             50% { transform: scale(1.05); filter: brightness(1.5); }
         }
 
-        .hidden { opacity: 0; visibility: hidden; pointer-events: none; }
-
-        /* UI Elements */
         #hud-top-left {
             position: fixed; top: 30px; left: 30px; z-index: 300;
             font-family: var(--font-cyber); font-size: 0.7rem; color: var(--primary);
@@ -214,6 +264,17 @@
 
     <canvas id="star-canvas"></canvas>
     <canvas id="firework-canvas"></canvas>
+
+    <div id="kerem-signature">
+        <div class="sig-container">
+            <span class="sig-text">Sistem Mimarı</span>
+            <div class="sig-main">
+                Oluşturan: Kerem
+                <span style="opacity: 0.3;">|</span>
+                <a href="https://instagram.com/Kerem58012" target="_blank" class="sig-insta">Instagram: Kerem58012</a>
+            </div>
+        </div>
+    </div>
 
     <section id="lobby">
         <div class="cyber-hud" id="hud-card">
@@ -240,7 +301,7 @@
     <script>
         /**
          * KEREM FUTURE ENGINE v5.0
-         * 800+ Satır Mantığı ve Fizik Motoru
+         * Tam Profesyonel Yeni Yıl Deneyimi
          */
 
         const S = {
@@ -264,7 +325,6 @@
             fw: canvases.fw.getContext('2d')
         };
 
-        // 1. BOOT SEQUENCE
         function boot() {
             let p = 0;
             const bar = document.getElementById('bp');
@@ -276,7 +336,7 @@
                     document.getElementById('startBtn').classList.add('active');
                 }
                 bar.style.width = p + '%';
-            }, 100);
+            }, 80);
         }
 
         function launchSystem() {
@@ -291,7 +351,6 @@
             animate();
         }
 
-        // 2. DIMENSIONS
         function resize() {
             Object.values(canvases).forEach(c => {
                 c.width = window.innerWidth;
@@ -301,87 +360,64 @@
         window.addEventListener('resize', resize);
         resize();
 
-        // 3. MOUSE INTERACTION
         window.addEventListener('mousemove', e => {
             S.mouse.x = e.clientX;
             S.mouse.y = e.clientY;
             document.getElementById('c-ring').style.transform = `translate(${e.clientX - 20}px, ${e.clientY - 20}px)`;
             
             if(!S.isCelebration) {
-                const tiltX = (window.innerHeight / 2 - e.clientY) / 25;
-                const tiltY = (e.clientX - window.innerWidth / 2) / 25;
-                document.getElementById('hud-card').style.transform = `rotateX(${tiltX}deg) rotateY(${tiltY}deg)`;
+                const tiltX = (window.innerHeight / 2 - e.clientY) / 30;
+                const tiltY = (e.clientX - window.innerWidth / 2) / 30;
+                const hud = document.getElementById('hud-card');
+                if(hud) hud.style.transform = `rotateX(${tiltX}deg) rotateY(${tiltY}deg)`;
             }
         });
 
-        // 4. PHYSICS & STAR ENGINE
         class Star {
-            constructor() {
-                this.reset();
-            }
+            constructor() { this.reset(); }
             reset() {
                 this.x = (Math.random() - 0.5) * window.innerWidth * 2;
                 this.y = (Math.random() - 0.5) * window.innerHeight * 2;
                 this.z = Math.random() * window.innerWidth;
-                this.px = this.x;
-                this.py = this.y;
             }
             update() {
-                this.px = this.x;
-                this.py = this.y;
-                let speed = S.isWarping ? 50 : 2;
+                let speed = S.isWarping ? 60 : 2;
                 this.z -= speed;
                 if(this.z < 1) this.reset();
             }
             draw() {
                 let sx = map(this.x / this.z, 0, 1, 0, window.innerWidth) + window.innerWidth/2;
                 let sy = map(this.y / this.z, 0, 1, 0, window.innerHeight) + window.innerHeight/2;
-                let r = map(this.z, 0, window.innerWidth, 8, 0);
-
+                let r = map(this.z, 0, window.innerWidth, 6, 0);
                 ctxs.star.fillStyle = "white";
                 ctxs.star.beginPath();
                 ctxs.star.arc(sx, sy, r/2, 0, Math.PI*2);
                 ctxs.star.fill();
-
-                if(S.isWarping) {
-                    ctxs.star.strokeStyle = `rgba(255, 255, 255, ${1 - this.z/window.innerWidth})`;
-                    ctxs.star.lineWidth = r;
-                    ctxs.star.beginPath();
-                    ctxs.star.moveTo(sx, sy);
-                    ctxs.star.lineTo(sx, sy); // Trail logic simplified for performance
-                    ctxs.star.stroke();
-                }
             }
         }
 
         function initStars() {
-            for(let i=0; i<1200; i++) S.stars.push(new Star());
+            for(let i=0; i<1000; i++) S.stars.push(new Star());
         }
 
-        // 5. FIREWORKS SYSTEM (PRO PHYSICS)
         class Particle {
             constructor(x, y, color) {
                 this.x = x; this.y = y; this.color = color;
                 this.v = {
-                    x: (Math.random() - 0.5) * (Math.random() * 12),
-                    y: (Math.random() - 0.5) * (Math.random() * 12)
+                    x: (Math.random() - 0.5) * (Math.random() * 15),
+                    y: (Math.random() - 0.5) * (Math.random() * 15)
                 };
                 this.alpha = 1;
-                this.friction = 0.95;
-                this.gravity = 0.12;
+                this.gravity = 0.15;
             }
             update() {
-                this.v.x *= this.friction;
-                this.v.y *= this.friction;
                 this.v.y += this.gravity;
                 this.x += this.v.x;
                 this.y += this.v.y;
-                this.alpha -= 0.008;
+                this.alpha -= 0.01;
             }
             draw() {
                 ctxs.fw.globalAlpha = this.alpha;
-                ctxs.fw.shadowBlur = 10;
-                ctxs.fw.shadowColor = this.color;
                 ctxs.fw.fillStyle = this.color;
                 ctxs.fw.beginPath();
                 ctxs.fw.arc(this.x, this.y, 2, 0, Math.PI*2);
@@ -393,16 +429,15 @@
             constructor() {
                 this.x = Math.random() * window.innerWidth;
                 this.y = window.innerHeight;
-                this.targetY = Math.random() * (window.innerHeight * 0.5);
+                this.targetY = Math.random() * (window.innerHeight * 0.4);
                 this.color = S.colors[Math.floor(Math.random()*S.colors.length)];
-                this.speed = 10 + Math.random()*5;
                 this.dead = false;
             }
             update() {
-                this.y -= this.speed;
+                this.y -= 12;
                 if(this.y <= this.targetY) {
                     this.dead = true;
-                    this.explode();
+                    for(let i=0; i<80; i++) S.particles.push(new Particle(this.x, this.y, this.color));
                 }
             }
             draw() {
@@ -411,25 +446,16 @@
                 ctxs.fw.arc(this.x, this.y, 3, 0, Math.PI*2);
                 ctxs.fw.fill();
             }
-            explode() {
-                for(let i=0; i<100; i++) S.particles.push(new Particle(this.x, this.y, this.color));
-            }
         }
 
-        // 6. MAIN ANIMATION LOOP
         function animate() {
-            // Star Layer
-            ctxs.star.fillStyle = S.isWarping ? 'rgba(0,0,0,0.2)' : 'black';
+            ctxs.star.fillStyle = S.isWarping ? 'rgba(0,0,0,0.15)' : 'black';
             ctxs.star.fillRect(0, 0, window.innerWidth, window.innerHeight);
             S.stars.forEach(s => { s.update(); s.draw(); });
 
-            // Firework Layer
             ctxs.fw.clearRect(0, 0, window.innerWidth, window.innerHeight);
+            if(S.isCelebration || Math.random() < 0.05) S.fireworks.push(new Firework());
             
-            if(S.isCelebration || Math.random() < 0.05) {
-                S.fireworks.push(new Firework());
-            }
-
             S.fireworks = S.fireworks.filter(f => !f.dead);
             S.fireworks.forEach(f => { f.update(); f.draw(); });
 
@@ -440,19 +466,15 @@
             requestAnimationFrame(animate);
         }
 
-        // 7. TIMER & LOGIC
         function updateTimer() {
             const diff = S.target - new Date().getTime();
-            if(diff <= 0 && !S.isCelebration) {
-                triggerCelebration();
-                return;
-            }
-            if(diff <= 10000 && diff > 0) S.isWarping = true; // Last 10 seconds warp
+            if(diff <= 0 && !S.isCelebration) { triggerCelebration(); return; }
+            if(diff <= 10000 && diff > 0) S.isWarping = true;
 
-            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-            const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-            const secs = Math.floor((diff % (1000 * 60)) / 1000);
+            const days = Math.floor(diff / 86400000);
+            const hours = Math.floor((diff % 86400000) / 3600000);
+            const mins = Math.floor((diff % 3600000) / 60000);
+            const secs = Math.floor((diff % 60000) / 1000);
 
             document.getElementById('d').innerText = days.toString().padStart(2, '0');
             document.getElementById('h').innerText = hours.toString().padStart(2, '0');
@@ -466,21 +488,20 @@
             document.getElementById('lobby').style.opacity = '0';
             setTimeout(() => {
                 document.getElementById('lobby').style.display = 'none';
-                const cel = document.getElementById('celebration');
-                cel.style.display = 'flex';
+                document.getElementById('celebration').style.display = 'flex';
                 typeMessage();
-            }, 1500);
+            }, 1000);
         }
 
         function typeMessage() {
-            const m = "KEREM SİSTEMİ: 2026_MODU_AKTİF. Geçmiş sadece bir veri yığınıydı, asıl macera şimdi başlıyor. Bu yıl senin algoritman en yüksek performansta çalışacak. Yeni yıla, yeni Kerem'e ve efsane bir geleceğe merhaba de!";
+            const m = "KEREM OS AKTİF: 2026 yılına başarıyla giriş yapıldı. Gelecek senin parmaklarının ucunda. Yeni yılın kutlu olsun Kerem!";
             let i = 0;
             const target = document.getElementById('writer');
             function type() {
                 if(i < m.length) {
                     target.innerHTML += m.charAt(i);
                     i++;
-                    setTimeout(type, 40);
+                    setTimeout(type, 50);
                 }
             }
             type();
