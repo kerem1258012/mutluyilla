@@ -6,48 +6,49 @@
 <title>2025 | Bekleme Alanı</title>
 
 <style>
-/* ================= RESET ================= */
 *{margin:0;padding:0;box-sizing:border-box}
 html,body{
     width:100%;height:100%;
-    background:#000;color:#fff;
     font-family:Segoe UI,Arial;
     overflow:hidden;
+    color:#fff;
 }
 
-/* ================= CREDIT ================= */
+/* ====== ARKAPLAN ====== */
+body{
+    background:
+        radial-gradient(circle at 20% 20%, #3b1d5a, transparent 40%),
+        radial-gradient(circle at 80% 30%, #1b4b6b, transparent 45%),
+        radial-gradient(circle at 50% 80%, #0f2c3f, transparent 50%),
+        linear-gradient(120deg, #050c1a, #0a1a2f, #050c1a);
+    background-size:200% 200%;
+    animation:bgMove 20s ease infinite;
+}
+@keyframes bgMove{
+    0%{background-position:0% 50%}
+    50%{background-position:100% 50%}
+    100%{background-position:0% 50%}
+}
+
+/* ====== NOISE ====== */
+.noise{
+    position:fixed;inset:0;
+    background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events:none;
+}
+
+/* ====== CREDIT ====== */
 #credit{
     position:fixed;
-    right:12px;
+    right:14px;
     bottom:10px;
     font-size:11px;
-    opacity:.35;
+    opacity:.4;
     letter-spacing:1px;
-    z-index:999;
+    z-index:10;
 }
 
-/* ================= GLITCH BG ================= */
-.bg{
-    position:fixed;inset:0;
-    background:
-        repeating-linear-gradient(
-            0deg,
-            #000 0px,
-            #000 2px,
-            #050505 3px
-        );
-    animation:noise .2s infinite;
-    z-index:-1;
-}
-@keyframes noise{
-    0%{transform:translate(0,0)}
-    25%{transform:translate(1px,-1px)}
-    50%{transform:translate(-1px,1px)}
-    75%{transform:translate(1px,1px)}
-    100%{transform:translate(0,0)}
-}
-
-/* ================= WAITING ================= */
+/* ====== WAITING ====== */
 #waiting{
     position:fixed;inset:0;
     display:flex;
@@ -60,15 +61,15 @@ html,body{
     letter-spacing:14px;
 }
 .wait-sub{
-    margin-top:14px;
+    margin-top:12px;
     font-size:.85rem;
-    opacity:.45;
+    opacity:.6;
     letter-spacing:4px;
 }
 .scan{
     margin-top:40px;
-    width:280px;height:2px;
-    background:#111;
+    width:300px;height:2px;
+    background:rgba(255,255,255,.15);
     overflow:hidden;
 }
 .scan span{
@@ -82,7 +83,7 @@ html,body{
     to{transform:translateX(220%)}
 }
 
-/* ================= STAGE ================= */
+/* ====== STAGE ====== */
 #stage{
     position:fixed;inset:0;
     display:none;
@@ -93,11 +94,7 @@ html,body{
 .year{
     font-size:9rem;
     letter-spacing:18px;
-    animation:flicker 2.5s infinite alternate;
-}
-@keyframes flicker{
-    from{text-shadow:0 0 10px #fff}
-    to{text-shadow:0 0 50px #fff}
+    text-shadow:0 0 40px rgba(255,255,255,.4);
 }
 .countdown{
     display:flex;
@@ -108,18 +105,18 @@ html,body{
 .box span{font-size:3rem}
 .box label{
     font-size:.7rem;
-    opacity:.45;
+    opacity:.6;
     letter-spacing:2px;
 }
 
-/* ================= BOOM ================= */
+/* ====== BOOM ====== */
 #boom{
     position:fixed;inset:0;
     display:none;
     align-items:center;
     justify-content:center;
     flex-direction:column;
-    background:#000;
+    backdrop-filter:blur(6px);
 }
 #boom h1{
     font-size:5.5rem;
@@ -127,7 +124,7 @@ html,body{
     animation:zoom .9s ease forwards;
 }
 #boom p{
-    margin-top:25px;
+    margin-top:20px;
     font-size:1.3rem;
     opacity:0;
     animation:fadeUp 1s ease forwards;
@@ -142,7 +139,7 @@ html,body{
     to{transform:translateY(0);opacity:1}
 }
 
-/* ================= CONFETTI ================= */
+/* ====== CONFETTI ====== */
 .confetti{
     position:fixed;
     width:6px;height:14px;
@@ -155,36 +152,23 @@ html,body{
         opacity:0;
     }
 }
-
-/* ================= FLASH ================= */
-.flash{
-    position:fixed;inset:0;
-    background:#fff;
-    animation:flash .4s ease forwards;
-}
-@keyframes flash{
-    from{opacity:1}
-    to{opacity:0}
-}
 </style>
 </head>
 
 <body>
 
-<div class="bg"></div>
+<div class="noise"></div>
 
 <div id="credit">
 Bu Siteyi Kerem Yapmıştır · Instagram: Kerem58012
 </div>
 
-<!-- WAITING -->
 <div id="waiting">
     <div class="wait-title">BEKLEME ALANI</div>
     <div class="wait-sub">2025 YÜKLENİYOR</div>
     <div class="scan"><span></span></div>
 </div>
 
-<!-- STAGE -->
 <div id="stage">
     <div class="year">2025</div>
     <div class="countdown">
@@ -195,33 +179,29 @@ Bu Siteyi Kerem Yapmıştır · Instagram: Kerem58012
     </div>
 </div>
 
-<!-- BOOM -->
 <div id="boom">
     <h1>🎆 2025 🎆</h1>
     <p>Yeni yıl başladı.</p>
 </div>
 
 <script>
-const waiting = document.getElementById("waiting");
-const stage = document.getElementById("stage");
-const boom = document.getElementById("boom");
+const waiting=document.getElementById("waiting");
+const stage=document.getElementById("stage");
+const boom=document.getElementById("boom");
 
-/* WAIT → STAGE */
 setTimeout(()=>{
     waiting.style.display="none";
     stage.style.display="flex";
 },3500);
 
-/* COUNTDOWN */
 function update(){
-    const now = new Date();
-    const target = new Date(now.getFullYear()+1,0,1);
-    const diff = target-now;
+    const now=new Date();
+    const target=new Date(now.getFullYear()+1,0,1);
+    const diff=target-now;
 
     if(diff<=0){
         stage.style.display="none";
         boom.style.display="flex";
-        flash();
         confetti();
         clearInterval(loop);
         return;
@@ -234,9 +214,8 @@ function update(){
 const loop=setInterval(update,1000);
 update();
 
-/* CONFETTI */
 function confetti(){
-    for(let i=0;i<450;i++){
+    for(let i=0;i<400;i++){
         const c=document.createElement("div");
         c.className="confetti";
         c.style.left=Math.random()*100+"vw";
@@ -245,14 +224,6 @@ function confetti(){
         document.body.appendChild(c);
         setTimeout(()=>c.remove(),5000);
     }
-}
-
-/* FLASH */
-function flash(){
-    const f=document.createElement("div");
-    f.className="flash";
-    document.body.appendChild(f);
-    setTimeout(()=>f.remove(),500);
 }
 </script>
 
