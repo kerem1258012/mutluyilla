@@ -3,454 +3,423 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>2026 | Yeni Yıl Heyecanı</title>
+    <title>2026 | Kerem Projesi - Final Experience</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&family=Poppins:wght@100;300;600&display=swap" rel="stylesheet">
     <style>
         /* =========================================
-           MODERN RESET & BASE
-        ========================================= */
+           1. CSS MİMARİSİ VE DEĞİŞKENLER
+           =========================================
+        */
         :root {
-            --primary: #00d4ff;
-            --secondary: #ff00c8;
-            --bg-dark: #02050a;
-            --glass: rgba(255, 255, 255, 0.1);
+            --primary: #00f2ff;
+            --secondary: #7000ff;
+            --accent: #ff0055;
+            --bg-deep: #020205;
+            --glass: rgba(255, 255, 255, 0.05);
+            --neon-glow: 0 0 15px rgba(0, 242, 255, 0.5), 0 0 30px rgba(0, 242, 255, 0.2);
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * { margin: 0; padding: 0; box-sizing: border-box; cursor: none; }
         
         body, html {
-            width: 100%;
-            height: 100%;
+            width: 100%; height: 100%;
             overflow: hidden;
-            background-color: var(--bg-dark);
-            font-family: 'Poppins', 'Segoe UI', sans-serif;
-            color: white;
+            background: var(--bg-deep);
+            font-family: 'Poppins', sans-serif;
+            color: #fff;
         }
 
         /* =========================================
-           CANVAS & BACKGROUND LAYER
-        ========================================= */
-        #canvas-bg {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 0;
+           2. KATMANLI GÖRSEL MOTORU
+           =========================================
+        */
+        #nebula-canvas, #fireworks-canvas, #overlay-canvas {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        }
+        #nebula-canvas { z-index: 1; }
+        #fireworks-canvas { z-index: 5; pointer-events: none; }
+        #overlay-canvas { z-index: 15; pointer-events: none; }
+
+        /* Giriş Paneli (Müzik İçin Şart) */
+        #entry-overlay {
+            position: fixed; inset: 0; z-index: 999;
+            background: var(--bg-deep);
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            transition: opacity 1s ease;
         }
 
-        .overlay {
-            position: fixed;
-            inset: 0;
-            background: radial-gradient(circle at center, transparent 0%, rgba(0,0,0,0.4) 100%);
-            z-index: 1;
-            pointer-events: none;
+        .start-btn {
+            padding: 20px 50px;
+            font-family: 'Orbitron', sans-serif;
+            background: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+            font-size: 1.5rem;
+            letter-spacing: 5px;
+            cursor: pointer;
+            transition: 0.4s;
+            box-shadow: var(--neon-glow);
         }
+
+        .start-btn:hover { background: var(--primary); color: #000; box-shadow: 0 0 50px var(--primary); }
 
         /* =========================================
-           LOBBY / COUNTDOWN SECTION
-        ========================================= */
+           3. LOBİ TASARIMI (UI)
+           =========================================
+        */
         #lobby {
-            position: relative;
-            z-index: 10;
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            transition: opacity 1s ease, transform 1s ease;
+            position: relative; z-index: 10;
+            height: 100vh; display: flex;
+            align-items: center; justify-content: center;
+            perspective: 2000px;
+            transition: transform 1.5s cubic-bezier(0.4, 0, 0.2, 1), opacity 1s;
         }
 
-        .header-box {
+        .cyber-panel {
+            background: var(--glass);
+            backdrop-filter: blur(30px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 80px; border-radius: 50px;
             text-align: center;
-            margin-bottom: 50px;
-            animation: fadeInDown 1.5s ease;
+            box-shadow: 0 50px 100px rgba(0,0,0,0.8);
+            transform-style: preserve-3d;
         }
 
-        #title-2026 {
+        .glitch-title {
+            font-family: 'Orbitron', sans-serif;
             font-size: clamp(4rem, 15vw, 10rem);
             font-weight: 900;
-            background: linear-gradient(to bottom, #fff, #666);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            letter-spacing: -5px;
             line-height: 0.8;
             margin-bottom: 20px;
+            position: relative;
+            background: linear-gradient(to bottom, #fff, var(--primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
-        #subtitle {
-            font-size: 1.2rem;
-            letter-spacing: 4px;
-            text-transform: uppercase;
-            opacity: 0.7;
+        .countdown-container {
+            display: flex; gap: 40px; margin-top: 50px;
         }
 
-        /* Countdown Cards */
-        #countdown-container {
-            display: flex;
-            gap: 20px;
-            perspective: 1000px;
+        .time-block {
+            position: relative; min-width: 120px;
         }
 
-        .time-card {
-            background: var(--glass);
-            backdrop-filter: blur(15px);
-            border: 1px solid rgba(255,255,255,0.1);
-            padding: 25px;
-            border-radius: 20px;
-            min-width: 120px;
-            text-align: center;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.5);
-            transform: rotateX(10deg);
-            transition: transform 0.3s ease;
+        .time-val {
+            display: block; font-family: 'Orbitron', sans-serif;
+            font-size: 4rem; font-weight: 700; color: #fff;
+            text-shadow: var(--neon-glow);
         }
 
-        .time-card:hover {
-            transform: rotateX(0deg) scale(1.05);
-            border-color: var(--primary);
-        }
-
-        .time-card span {
-            display: block;
-            font-size: 3.5rem;
-            font-weight: 800;
-            font-variant-numeric: tabular-nums;
-            text-shadow: 0 0 20px rgba(0, 212, 255, 0.5);
-        }
-
-        .time-card label {
-            font-size: 0.75rem;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            color: var(--primary);
+        .time-label {
+            font-size: 0.8rem; letter-spacing: 4px; opacity: 0.5; text-transform: uppercase;
         }
 
         /* =========================================
-           CELEBRATION SECTION
-        ========================================= */
+           4. KUTLAMA EKRANI
+           =========================================
+        */
         #celebration {
-            position: fixed;
-            inset: 0;
-            z-index: 20;
-            display: none;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            background: rgba(0,0,0,0.8);
-            backdrop-filter: blur(10px);
-        }
-
-        .welcome-text {
-            font-size: clamp(5rem, 20vw, 15rem);
-            font-weight: 900;
-            text-shadow: 0 0 50px var(--primary), 0 0 100px var(--secondary);
-            animation: pulse 2s infinite;
-        }
-
-        .quote {
-            font-size: 1.5rem;
-            max-width: 600px;
+            position: fixed; inset: 0; z-index: 100;
+            display: none; flex-direction: column;
+            align-items: center; justify-content: center;
+            background: radial-gradient(circle, transparent, #000);
             text-align: center;
-            margin-top: 20px;
-            line-height: 1.6;
-            font-style: italic;
-            opacity: 0;
-            transform: translateY(30px);
-            animation: fadeInUp 1s forwards 1s;
+        }
+
+        .cel-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 15vw; font-weight: 900;
+            color: #fff; text-shadow: 0 0 50px var(--secondary);
+            animation: shake 0.5s infinite;
         }
 
         /* =========================================
-           ANIMATIONS
-        ========================================= */
-        @keyframes fadeInDown {
-            from { opacity: 0; transform: translateY(-50px); }
-            to { opacity: 1; transform: translateY(0); }
+           5. ANİMASYONLAR
+           =========================================
+        */
+        @keyframes shake {
+            0% { transform: translate(1px, 1px) rotate(0deg); }
+            20% { transform: translate(-3px, 0px) rotate(1deg); }
+            40% { transform: translate(3px, 2px) rotate(-1deg); }
+            60% { transform: translate(-1px, -1px) rotate(1deg); }
+            100% { transform: translate(1px, -2px) rotate(0deg); }
         }
 
-        @keyframes fadeInUp {
-            to { opacity: 1; transform: translateY(0); }
+        .custom-cursor {
+            position: fixed; width: 20px; height: 20px;
+            border: 2px solid var(--primary); border-radius: 50%;
+            pointer-events: none; z-index: 1000;
+            transition: transform 0.1s ease;
         }
 
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); filter: brightness(1); }
-            50% { transform: scale(1.05); filter: brightness(1.3); }
-        }
-
-        /* =========================================
-           FOOTER & UI
-        ========================================= */
         #credit {
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 100;
-            font-size: 0.8rem;
-            opacity: 0.5;
-            letter-spacing: 1px;
+            position: fixed; bottom: 20px; width: 100%;
+            text-align: center; font-size: 0.7rem; letter-spacing: 5px;
+            opacity: 0.4; z-index: 200;
         }
 
-        .mute-btn {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 100;
-            background: var(--glass);
-            border: none;
-            color: white;
-            padding: 10px;
-            border-radius: 50%;
-            cursor: pointer;
-        }
-
-        @media (max-width: 768px) {
-            #countdown-container { gap: 10px; flex-wrap: wrap; justify-content: center; }
-            .time-card { min-width: 80px; padding: 15px; }
-            .time-card span { font-size: 2rem; }
-        }
     </style>
 </head>
 <body>
 
-<canvas id="canvas-bg"></canvas>
-<div class="overlay"></div>
-
-<button class="mute-btn" onclick="toggleAudio()" id="audioBtn">🔇</button>
-
-<section id="lobby">
-    <div class="header-box">
-        <h1 id="title-2026">2026</h1>
-        <p id="subtitle">Yeni bir çağın eşiğindeyiz</p>
+    <div id="entry-overlay">
+        <h2 style="margin-bottom: 30px; letter-spacing: 10px; font-weight: 100;">SİSTEM HAZIR</h2>
+        <button class="start-btn" onclick="initializeSystem()">DENEYİMİ BAŞLAT</button>
     </div>
 
-    <div id="countdown-container">
-        <div class="time-card">
-            <span id="days">00</span>
-            <label>Gün</label>
+    <div class="custom-cursor" id="cursor"></div>
+    <canvas id="nebula-canvas"></canvas>
+    <canvas id="fireworks-canvas"></canvas>
+    <canvas id="overlay-canvas"></canvas>
+
+    <section id="lobby">
+        <div class="cyber-panel" id="main-panel">
+            <div class="status-bar" style="font-size: 0.6rem; color: var(--primary); margin-bottom: 20px; letter-spacing: 5px;">
+                CONNECTED_TO_FUTURE_2026 // KEREM_OS_V4.8
+            </div>
+            <h1 class="glitch-title">2026</h1>
+            <div class="countdown-container">
+                <div class="time-block"><span class="time-val" id="d">00</span><span class="time-label">GÜN</span></div>
+                <div class="time-block"><span class="time-val" id="h">00</span><span class="time-label">SAAT</span></div>
+                <div class="time-block"><span class="time-val" id="m">00</span><span class="time-label">DK</span></div>
+                <div class="time-block"><span class="time-val" id="s">00</span><span class="time-label">SN</span></div>
+            </div>
         </div>
-        <div class="time-card">
-            <span id="hours">00</span>
-            <label>Saat</label>
-        </div>
-        <div class="time-card">
-            <span id="minutes">00</span>
-            <label>Dakika</label>
-        </div>
-        <div class="time-card">
-            <span id="seconds">00</span>
-            <label>Saniye</label>
-        </div>
-    </div>
-</section>
+    </section>
 
-<section id="celebration">
-    <h1 class="welcome-text">2026</h1>
-    <p class="quote">"Geçmişin tozunu üzerinden silkele. <br> Bu yıl, senin hikayenin en parlak sayfası olacak."</p>
-</section>
+    <section id="celebration">
+        <h1 class="cel-title">2026</h1>
+        <div id="typing-msg" style="font-size: 1.5rem; max-width: 800px; font-weight: 100;"></div>
+    </section>
 
-<div id="credit">CREATIVE BY KEREM · INSTAGRAM: KEREM58012</div>
+    <div id="credit">CREATIVE DESIGN BY KEREM • INSTAGRAM: KEREM58012</div>
 
-<audio id="bgMusic" loop>
-    <source src="https://cdn.pixabay.com/audio/2022/11/22/audio_feb579979b.mp3" type="audio/mpeg">
-</audio>
+    <audio id="audio-track" loop>
+        <source src="https://cdn.pixabay.com/audio/2022/11/22/audio_feb579979b.mp3" type="audio/mpeg">
+    </audio>
 
-<script>
-    /**
-     * HAVAI FIŞEK VE EFEKT MOTORU
-     */
-    const canvas = document.getElementById('canvas-bg');
-    const ctx = canvas.getContext('2d');
-    let width, height, particles = [], fireworks = [];
+    <script>
+        /**
+         * 2026 CORE ENGINE - KEREM EDITION
+         * Satır sayısı ve kaliteyi artırmak için modüler yapıda kurgulanmıştır.
+         */
 
-    // Pencere Boyutu Ayarı
-    function resize() {
-        width = canvas.width = window.innerWidth;
-        height = canvas.height = window.innerHeight;
-    }
-    window.addEventListener('resize', resize);
-    resize();
-
-    // Yardımcı Fonksiyonlar
-    const random = (min, max) => Math.random() * (max - min) + min;
-
-    class Particle {
-        constructor(x, y, color, velocity) {
-            this.x = x;
-            this.y = y;
-            this.color = color;
-            this.velocity = velocity;
-            this.alpha = 1;
-            this.friction = 0.95;
-            this.gravity = 0.15;
-        }
-
-        draw() {
-            ctx.save();
-            ctx.globalAlpha = this.alpha;
-            ctx.beginPath();
-            ctx.arc(this.x, this.y, 2, 0, Math.PI * 2);
-            ctx.fillStyle = this.color;
-            ctx.fill();
-            ctx.restore();
-        }
-
-        update() {
-            this.velocity.x *= this.friction;
-            this.velocity.y *= this.friction;
-            this.velocity.y += this.gravity;
-            this.x += this.velocity.x;
-            this.y += this.velocity.y;
-            this.alpha -= 0.01;
-        }
-    }
-
-    class Firework {
-        constructor(x, y, targetY, color) {
-            this.x = x;
-            this.y = height;
-            this.targetY = targetY;
-            this.color = color;
-            this.velocity = { x: random(-1, 1), y: random(-8, -12) };
-            this.alive = true;
-        }
-
-        draw() {
-            ctx.beginPath();
-            ctx.arc(this.x, this.y, 3, 0, Math.PI * 2);
-            ctx.fillStyle = this.color;
-            ctx.fill();
-        }
-
-        update() {
-            this.x += this.velocity.x;
-            this.y += this.velocity.y;
-            if (this.y <= this.targetY) {
-                this.alive = false;
-                this.explode();
-            }
-        }
-
-        explode() {
-            const particleCount = 80;
-            const angleIncrement = (Math.PI * 2) / particleCount;
-            for (let i = 0; i < particleCount; i++) {
-                const velocity = {
-                    x: Math.cos(angleIncrement * i) * random(2, 8),
-                    y: Math.sin(angleIncrement * i) * random(2, 8)
-                };
-                particles.push(new Particle(this.x, this.y, this.color, velocity));
-            }
-        }
-    }
-
-    function animate() {
-        ctx.fillStyle = 'rgba(2, 5, 10, 0.2)'; // Kuyruklu efekt için az opak temizleme
-        ctx.fillRect(0, 0, width, height);
-
-        fireworks.forEach((fw, index) => {
-            fw.update();
-            fw.draw();
-            if (!fw.alive) fireworks.splice(index, 1);
-        });
-
-        particles.forEach((p, index) => {
-            if (p.alpha <= 0) {
-                particles.splice(index, 1);
-            } else {
-                p.update();
-                p.draw();
-            }
-        });
-
-        requestAnimationFrame(animate);
-    }
-    animate();
-
-    // Otomatik Havai Fişek Atıcı (Yeni Yıl Başlayınca Hızlanacak)
-    let fireworkInterval = 1500;
-    function launchFirework() {
-        const x = random(100, width - 100);
-        const y = random(100, height / 2);
-        const color = `hsl(${random(0, 360)}, 100%, 60%)`;
-        fireworks.push(new Firework(x, height, y, color));
-        setTimeout(launchFirework, fireworkInterval);
-    }
-    launchFirework();
-
-    /**
-     * GERİ SAYIM MANTIĞI
-     */
-    const targetTime = new Date("January 1, 2026 00:00:00").getTime();
-    
-    function updateCountdown() {
-        const now = new Date().getTime();
-        const diff = targetTime - now;
-
-        if (diff <= 0) {
-            startCelebration();
-            return;
-        }
-
-        const d = Math.floor(diff / (1000 * 60 * 60 * 24));
-        const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-        const s = Math.floor((diff % (1000 * 60)) / 1000);
-
-        document.getElementById('days').innerText = d.toString().padStart(2, '0');
-        document.getElementById('hours').innerText = h.toString().padStart(2, '0');
-        document.getElementById('minutes').innerText = m.toString().padStart(2, '0');
-        document.getElementById('seconds').innerText = s.toString().padStart(2, '0');
-    }
-
-    const timer = setInterval(updateCountdown, 1000);
-
-    function startCelebration() {
-        clearInterval(timer);
-        document.getElementById('lobby').style.display = 'none';
-        document.getElementById('celebration').style.display = 'flex';
-        fireworkInterval = 300; // Havai fişekleri sıklaştır
+        // Global Değişkenler
+        const nebulaCanvas = document.getElementById('nebula-canvas');
+        const fwCanvas = document.getElementById('fireworks-canvas');
+        const nCtx = nebulaCanvas.getContext('2d');
+        const fCtx = fwCanvas.getContext('2d');
         
-        // Ekstra kutlama efektleri
-        setInterval(() => {
-            for(let i=0; i<5; i++) {
-                const x = random(0, width);
-                const color = `hsl(${random(0, 360)}, 100%, 50%)`;
-                fireworks.push(new Firework(x, height, random(100, height/2), color));
+        let width, height;
+        let stars = [];
+        let particles = [];
+        let fireworks = [];
+        let isSystemLive = false;
+        let celebrationTriggered = false;
+
+        const targetDate = new Date("January 1, 2026 00:00:00").getTime();
+
+        /**
+         * 1. SİSTEM BAŞLATICI
+         */
+        function initializeSystem() {
+            document.getElementById('entry-overlay').style.opacity = '0';
+            setTimeout(() => {
+                document.getElementById('entry-overlay').style.display = 'none';
+            }, 1000);
+
+            const audio = document.getElementById('audio-track');
+            audio.play().catch(e => console.log("Müzik başlatılamadı:", e));
+            
+            isSystemLive = true;
+            initNebula();
+            animate();
+        }
+
+        /**
+         * 2. BOYUTLANDIRMA VE MOUSE
+         */
+        function resize() {
+            width = nebulaCanvas.width = fwCanvas.width = window.innerWidth;
+            height = nebulaCanvas.height = fwCanvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resize);
+        resize();
+
+        const cursor = document.getElementById('cursor');
+        window.addEventListener('mousemove', e => {
+            cursor.style.transform = `translate(${e.clientX}px, ${e.clientY}px)`;
+            // Paneli hafifçe eğ
+            if(!celebrationTriggered) {
+                const xRotate = (window.innerHeight / 2 - e.clientY) / 20;
+                const yRotate = (e.clientX - window.innerWidth / 2) / 20;
+                document.getElementById('main-panel').style.transform = `rotateX(${xRotate}deg) rotateY(${yRotate}deg)`;
             }
-        }, 1000);
-    }
+        });
 
-    /**
-     * SES KONTROLÜ
-     */
-    function toggleAudio() {
-        const audio = document.getElementById('bgMusic');
-        const btn = document.getElementById('audioBtn');
-        if (audio.paused) {
-            audio.play();
-            btn.innerText = '🔊';
-        } else {
-            audio.pause();
-            btn.innerText = '🔇';
+        /**
+         * 3. NEBULA (ARKA PLAN) MOTORU
+         */
+        class Star {
+            constructor() {
+                this.x = Math.random() * width;
+                this.y = Math.random() * height;
+                this.z = Math.random() * width;
+                this.size = 1.2;
+            }
+            update() {
+                this.z -= 2;
+                if (this.z <= 0) {
+                    this.z = width;
+                    this.x = Math.random() * width;
+                    this.y = Math.random() * height;
+                }
+            }
+            draw() {
+                let sx = (this.x - width / 2) * (width / this.z) + width / 2;
+                let sy = (this.y - height / 2) * (width / this.z) + height / 2;
+                let r = (width / this.z) * this.size;
+                nCtx.fillStyle = `rgba(255, 255, 255, ${1 - this.z / width})`;
+                nCtx.beginPath();
+                nCtx.arc(sx, sy, r, 0, Math.PI * 2);
+                nCtx.fill();
+            }
         }
-    }
 
-    // Yıldız Arka Planı Ekleme
-    function createStars() {
-        for(let i=0; i<100; i++) {
-            const star = document.createElement('div');
-            star.style.position = 'absolute';
-            star.style.width = '2px';
-            star.style.height = '2px';
-            star.style.background = 'white';
-            star.style.top = Math.random() * 100 + '%';
-            star.style.left = Math.random() * 100 + '%';
-            star.style.opacity = Math.random();
-            star.style.zIndex = '0';
-            document.body.appendChild(star);
+        function initNebula() {
+            for (let i = 0; i < 800; i++) stars.push(new Star());
         }
-    }
-    createStars();
-</script>
 
+        /**
+         * 4. HAVAİ FİŞEK VE FİZİK MOTORU
+         */
+        class Particle {
+            constructor(x, y, color) {
+                this.x = x; this.y = y; this.color = color;
+                this.v = {
+                    x: (Math.random() - 0.5) * (Math.random() * 10),
+                    y: (Math.random() - 0.5) * (Math.random() * 10)
+                };
+                this.alpha = 1;
+                this.friction = 0.96;
+                this.gravity = 0.15;
+            }
+            draw() {
+                fCtx.globalAlpha = this.alpha;
+                fCtx.fillStyle = this.color;
+                fCtx.beginPath();
+                fCtx.arc(this.x, this.y, 2, 0, Math.PI * 2);
+                fCtx.fill();
+            }
+            update() {
+                this.v.x *= this.friction;
+                this.v.y *= this.friction;
+                this.v.y += this.gravity;
+                this.x += this.v.x;
+                this.y += this.v.y;
+                this.alpha -= 0.01;
+            }
+        }
+
+        class Firework {
+            constructor() {
+                this.x = Math.random() * width;
+                this.y = height;
+                this.targetY = Math.random() * (height / 2);
+                this.color = `hsl(${Math.random() * 360}, 100%, 60%)`;
+                this.speed = 15;
+                this.isBlown = false;
+            }
+            update() {
+                if(!this.isBlown) {
+                    this.y -= this.speed;
+                    if(this.y <= this.targetY) {
+                        this.isBlown = true;
+                        this.explode();
+                    }
+                }
+            }
+            draw() {
+                if(!this.isBlown) {
+                    fCtx.fillStyle = this.color;
+                    fCtx.beginPath();
+                    fCtx.arc(this.x, this.y, 3, 0, Math.PI * 2);
+                    fCtx.fill();
+                }
+            }
+            explode() {
+                for(let i=0; i<80; i++) particles.push(new Particle(this.x, this.y, this.color));
+            }
+        }
+
+        /**
+         * 5. ANA DÖNGÜ (RENDER LOOP)
+         */
+        function animate() {
+            nCtx.fillStyle = 'rgba(2, 2, 5, 0.4)';
+            nCtx.fillRect(0, 0, width, height);
+            
+            stars.forEach(s => { s.update(); s.draw(); });
+
+            fCtx.clearRect(0, 0, width, height);
+            
+            if(celebrationTriggered || Math.random() < 0.05) {
+                fireworks.push(new Firework());
+            }
+
+            fireworks = fireworks.filter(f => !f.isBlown);
+            fireworks.forEach(f => { f.update(); f.draw(); });
+
+            particles = particles.filter(p => p.alpha > 0);
+            particles.forEach(p => { p.update(); p.draw(); });
+
+            updateTimer();
+            requestAnimationFrame(animate);
+        }
+
+        /**
+         * 6. ZAMANLAYICI VE SAHNE GEÇİŞİ
+         */
+        function updateTimer() {
+            const now = new Date().getTime();
+            const diff = targetDate - now;
+
+            if (diff <= 0 && !celebrationTriggered) {
+                startCelebration();
+                return;
+            }
+
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+            document.getElementById('d').innerText = days.toString().padStart(2, '0');
+            document.getElementById('h').innerText = hours.toString().padStart(2, '0');
+            document.getElementById('m').innerText = minutes.toString().padStart(2, '0');
+            document.getElementById('s').innerText = seconds.toString().padStart(2, '0');
+        }
+
+        function startCelebration() {
+            celebrationTriggered = true;
+            document.getElementById('lobby').style.display = 'none';
+            const cel = document.getElementById('celebration');
+            cel.style.display = 'flex';
+            
+            // Daktilo efekti ile mesaj
+            const msg = "Tebrikler Kerem! 2025'in tüm tozunu yutmuş olabilirsin ama 2026 senin parladığın yıl olacak. Şimdi ekranın her yerinde patlayan bu ışıklar senin başarın için. Yeni yılın kutlu olsun!";
+            let i = 0;
+            function type() {
+                if(i < msg.length) {
+                    document.getElementById('typing-msg').innerHTML += msg.charAt(i);
+                    i++;
+                    setTimeout(type, 50);
+                }
+            }
+            type();
+        }
+
+    </script>
 </body>
 </html>
