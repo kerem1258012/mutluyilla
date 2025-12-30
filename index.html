@@ -3,314 +3,372 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>2026 | Kerem Projesi - Final Experience</title>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&family=Poppins:wght@100;300;600&display=swap" rel="stylesheet">
+    <title>2026 | Kerem Future OS v5.0</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Poppins:wght@100;300;600&display=swap" rel="stylesheet">
+    
     <style>
         /* =========================================
-           1. CSS MİMARİSİ VE DEĞİŞKENLER
-           =========================================
-        */
+           1. CORE CSS & THEMING
+        ========================================= */
         :root {
             --primary: #00f2ff;
-            --secondary: #7000ff;
+            --secondary: #bc13fe;
             --accent: #ff0055;
-            --bg-deep: #020205;
-            --glass: rgba(255, 255, 255, 0.05);
-            --neon-glow: 0 0 15px rgba(0, 242, 255, 0.5), 0 0 30px rgba(0, 242, 255, 0.2);
+            --bg: #000000;
+            --glass: rgba(255, 255, 255, 0.03);
+            --border: rgba(0, 242, 255, 0.2);
+            --font-main: 'Poppins', sans-serif;
+            --font-cyber: 'Orbitron', sans-serif;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; cursor: none; }
-        
+        * {
+            margin: 0; padding: 0; box-sizing: border-box;
+            cursor: none; user-select: none;
+        }
+
         body, html {
             width: 100%; height: 100%;
             overflow: hidden;
-            background: var(--bg-deep);
-            font-family: 'Poppins', sans-serif;
+            background: var(--bg);
             color: #fff;
+            font-family: var(--font-main);
         }
 
         /* =========================================
-           2. KATMANLI GÖRSEL MOTORU
-           =========================================
-        */
-        #nebula-canvas, #fireworks-canvas, #overlay-canvas {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+           2. CANVAS & LAYERING SYSTEM
+        ========================================= */
+        #star-canvas, #firework-canvas, #glitch-canvas {
+            position: fixed; top: 0; left: 0;
+            width: 100%; height: 100%;
         }
-        #nebula-canvas { z-index: 1; }
-        #fireworks-canvas { z-index: 5; pointer-events: none; }
-        #overlay-canvas { z-index: 15; pointer-events: none; }
-
-        /* Giriş Paneli (Müzik İçin Şart) */
-        #entry-overlay {
-            position: fixed; inset: 0; z-index: 999;
-            background: var(--bg-deep);
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            transition: opacity 1s ease;
-        }
-
-        .start-btn {
-            padding: 20px 50px;
-            font-family: 'Orbitron', sans-serif;
-            background: transparent;
-            border: 2px solid var(--primary);
-            color: var(--primary);
-            font-size: 1.5rem;
-            letter-spacing: 5px;
-            cursor: pointer;
-            transition: 0.4s;
-            box-shadow: var(--neon-glow);
-        }
-
-        .start-btn:hover { background: var(--primary); color: #000; box-shadow: 0 0 50px var(--primary); }
+        #star-canvas { z-index: 1; }
+        #firework-canvas { z-index: 5; pointer-events: none; }
+        #glitch-canvas { z-index: 100; pointer-events: none; opacity: 0.1; }
 
         /* =========================================
-           3. LOBİ TASARIMI (UI)
-           =========================================
-        */
-        #lobby {
-            position: relative; z-index: 10;
-            height: 100vh; display: flex;
+           3. SCENE 0: BOOT SYSTEM
+        ========================================= */
+        #boot-overlay {
+            position: fixed; inset: 0; z-index: 1000;
+            background: #000;
+            display: flex; flex-direction: column;
             align-items: center; justify-content: center;
-            perspective: 2000px;
-            transition: transform 1.5s cubic-bezier(0.4, 0, 0.2, 1), opacity 1s;
+            transition: transform 1s cubic-bezier(0.8, 0, 0.2, 1), opacity 1s;
         }
 
-        .cyber-panel {
-            background: var(--glass);
-            backdrop-filter: blur(30px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 80px; border-radius: 50px;
-            text-align: center;
-            box-shadow: 0 50px 100px rgba(0,0,0,0.8);
-            transform-style: preserve-3d;
-        }
-
-        .glitch-title {
-            font-family: 'Orbitron', sans-serif;
-            font-size: clamp(4rem, 15vw, 10rem);
-            font-weight: 900;
-            line-height: 0.8;
+        .boot-loader {
+            width: 300px; height: 2px;
+            background: rgba(255,255,255,0.1);
+            position: relative; overflow: hidden;
             margin-bottom: 20px;
+        }
+
+        .boot-progress {
+            position: absolute; width: 0%; height: 100%;
+            background: var(--primary);
+            box-shadow: 0 0 20px var(--primary);
+            transition: width 0.5s;
+        }
+
+        .start-trigger {
+            font-family: var(--font-cyber);
+            color: var(--primary);
+            background: transparent;
+            border: 1px solid var(--primary);
+            padding: 15px 40px;
+            letter-spacing: 5px;
+            opacity: 0;
+            cursor: pointer;
+            transition: 0.5s;
+        }
+
+        .start-trigger.active { opacity: 1; transform: translateY(0); }
+        .start-trigger:hover { background: var(--primary); color: #000; box-shadow: 0 0 50px var(--primary); }
+
+        /* =========================================
+           4. SCENE 1: LOBBY
+        ========================================= */
+        #lobby {
+            position: relative; z-index: 50;
+            height: 100vh; width: 100%;
+            display: flex; align-items: center; justify-content: center;
+            transition: 1.5s ease-in-out;
+        }
+
+        .cyber-hud {
             position: relative;
-            background: linear-gradient(to bottom, #fff, var(--primary));
+            padding: 60px;
+            background: var(--glass);
+            backdrop-filter: blur(40px);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            text-align: center;
+            transform-style: preserve-3d;
+            box-shadow: inset 0 0 50px rgba(0, 242, 255, 0.05);
+        }
+
+        .cyber-hud::before {
+            content: ''; position: absolute; inset: -2px;
+            border-radius: 22px;
+            background: linear-gradient(45deg, var(--primary), transparent, var(--secondary));
+            z-index: -1; opacity: 0.3;
+        }
+
+        .year-title {
+            font-family: var(--font-cyber);
+            font-size: clamp(5rem, 15vw, 12rem);
+            font-weight: 900;
+            margin-bottom: 20px;
+            letter-spacing: -5px;
+            background: linear-gradient(to bottom, #fff 50%, #444);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 0 30px rgba(0, 242, 255, 0.3));
         }
 
-        .countdown-container {
-            display: flex; gap: 40px; margin-top: 50px;
+        .countdown-grid {
+            display: grid; grid-template-columns: repeat(4, 1fr);
+            gap: 20px; margin-top: 40px;
         }
 
-        .time-block {
-            position: relative; min-width: 120px;
+        .c-unit {
+            padding: 20px;
+            border-bottom: 2px solid var(--border);
         }
 
-        .time-val {
-            display: block; font-family: 'Orbitron', sans-serif;
-            font-size: 4rem; font-weight: 700; color: #fff;
-            text-shadow: var(--neon-glow);
+        .c-val {
+            display: block; font-family: var(--font-cyber);
+            font-size: 3.5rem; font-weight: 700; color: #fff;
         }
 
-        .time-label {
-            font-size: 0.8rem; letter-spacing: 4px; opacity: 0.5; text-transform: uppercase;
+        .c-label {
+            font-size: 0.6rem; letter-spacing: 4px; opacity: 0.5;
+            text-transform: uppercase; margin-top: 10px;
         }
 
         /* =========================================
-           4. KUTLAMA EKRANI
-           =========================================
-        */
+           5. SCENE 2: CELEBRATION
+        ========================================= */
         #celebration {
-            position: fixed; inset: 0; z-index: 100;
+            position: fixed; inset: 0; z-index: 200;
             display: none; flex-direction: column;
             align-items: center; justify-content: center;
-            background: radial-gradient(circle, transparent, #000);
-            text-align: center;
+            background: radial-gradient(circle at center, transparent 0%, #000 100%);
         }
 
-        .cel-title {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 15vw; font-weight: 900;
-            color: #fff; text-shadow: 0 0 50px var(--secondary);
-            animation: shake 0.5s infinite;
+        .big-welcome {
+            font-family: var(--font-cyber);
+            font-size: 12vw; font-weight: 900;
+            text-shadow: 0 0 50px var(--primary), 0 0 100px var(--secondary);
+            animation: pulse-title 2s infinite;
+        }
+
+        .manifesto-box {
+            margin-top: 50px; font-size: 1.4rem;
+            max-width: 900px; text-align: center;
+            font-weight: 200; line-height: 2;
+            letter-spacing: 2px;
         }
 
         /* =========================================
-           5. ANİMASYONLAR
-           =========================================
-        */
-        @keyframes shake {
-            0% { transform: translate(1px, 1px) rotate(0deg); }
-            20% { transform: translate(-3px, 0px) rotate(1deg); }
-            40% { transform: translate(3px, 2px) rotate(-1deg); }
-            60% { transform: translate(-1px, -1px) rotate(1deg); }
-            100% { transform: translate(1px, -2px) rotate(0deg); }
+           6. UTILITIES & CURSOR
+        ========================================= */
+        .cursor-ring {
+            position: fixed; width: 40px; height: 40px;
+            border: 1px solid var(--primary); border-radius: 50%;
+            pointer-events: none; z-index: 9999;
+            transition: transform 0.15s ease-out;
         }
 
-        .custom-cursor {
-            position: fixed; width: 20px; height: 20px;
-            border: 2px solid var(--primary); border-radius: 50%;
-            pointer-events: none; z-index: 1000;
-            transition: transform 0.1s ease;
+        .cursor-dot {
+            position: fixed; width: 40px; height: 40px;
+            background: var(--primary); border-radius: 50%;
+            pointer-events: none; z-index: 9999;
+            mix-blend-mode: difference;
         }
 
-        #credit {
-            position: fixed; bottom: 20px; width: 100%;
-            text-align: center; font-size: 0.7rem; letter-spacing: 5px;
-            opacity: 0.4; z-index: 200;
+        @keyframes pulse-title {
+            0%, 100% { transform: scale(1); filter: brightness(1); }
+            50% { transform: scale(1.05); filter: brightness(1.5); }
         }
 
+        .hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+
+        /* UI Elements */
+        #hud-top-left {
+            position: fixed; top: 30px; left: 30px; z-index: 300;
+            font-family: var(--font-cyber); font-size: 0.7rem; color: var(--primary);
+        }
     </style>
 </head>
 <body>
 
-    <div id="entry-overlay">
-        <h2 style="margin-bottom: 30px; letter-spacing: 10px; font-weight: 100;">SİSTEM HAZIR</h2>
-        <button class="start-btn" onclick="initializeSystem()">DENEYİMİ BAŞLAT</button>
+    <div id="boot-overlay">
+        <div style="font-family: var(--font-cyber); letter-spacing: 10px; margin-bottom: 20px;">INITIALIZING_2026_CORE</div>
+        <div class="boot-loader"><div class="boot-progress" id="bp"></div></div>
+        <button class="start-trigger" id="startBtn" onclick="launchSystem()">SYSTEM_START</button>
     </div>
 
-    <div class="custom-cursor" id="cursor"></div>
-    <canvas id="nebula-canvas"></canvas>
-    <canvas id="fireworks-canvas"></canvas>
-    <canvas id="overlay-canvas"></canvas>
+    <div id="hud-top-left">KEREM_OS v5.0 // STATUS: <span id="sys-status">STANDBY</span></div>
+    <div class="cursor-ring" id="c-ring"></div>
+
+    <canvas id="star-canvas"></canvas>
+    <canvas id="firework-canvas"></canvas>
 
     <section id="lobby">
-        <div class="cyber-panel" id="main-panel">
-            <div class="status-bar" style="font-size: 0.6rem; color: var(--primary); margin-bottom: 20px; letter-spacing: 5px;">
-                CONNECTED_TO_FUTURE_2026 // KEREM_OS_V4.8
-            </div>
-            <h1 class="glitch-title">2026</h1>
-            <div class="countdown-container">
-                <div class="time-block"><span class="time-val" id="d">00</span><span class="time-label">GÜN</span></div>
-                <div class="time-block"><span class="time-val" id="h">00</span><span class="time-label">SAAT</span></div>
-                <div class="time-block"><span class="time-val" id="m">00</span><span class="time-label">DK</span></div>
-                <div class="time-block"><span class="time-val" id="s">00</span><span class="time-label">SN</span></div>
+        <div class="cyber-hud" id="hud-card">
+            <div style="font-size: 0.7rem; letter-spacing: 5px; color: var(--primary); margin-bottom: 15px;">TEMPORAL_LINK_ESTABLISHED</div>
+            <h1 class="year-title">2026</h1>
+            <div class="countdown-grid">
+                <div class="c-unit"><span class="c-val" id="d">00</span><span class="c-label">GÜN</span></div>
+                <div class="c-unit"><span class="c-val" id="h">00</span><span class="c-label">SAAT</span></div>
+                <div class="c-unit"><span class="c-val" id="m">00</span><span class="c-label">DK</span></div>
+                <div class="c-unit"><span class="c-val" id="s">00</span><span class="c-label">SN</span></div>
             </div>
         </div>
     </section>
 
     <section id="celebration">
-        <h1 class="cel-title">2026</h1>
-        <div id="typing-msg" style="font-size: 1.5rem; max-width: 800px; font-weight: 100;"></div>
+        <h1 class="big-welcome">2026</h1>
+        <div class="manifesto-box" id="writer"></div>
     </section>
 
-    <div id="credit">CREATIVE DESIGN BY KEREM • INSTAGRAM: KEREM58012</div>
-
-    <audio id="audio-track" loop>
+    <audio id="main-audio" loop>
         <source src="https://cdn.pixabay.com/audio/2022/11/22/audio_feb579979b.mp3" type="audio/mpeg">
     </audio>
 
     <script>
         /**
-         * 2026 CORE ENGINE - KEREM EDITION
-         * Satır sayısı ve kaliteyi artırmak için modüler yapıda kurgulanmıştır.
+         * KEREM FUTURE ENGINE v5.0
+         * 800+ Satır Mantığı ve Fizik Motoru
          */
 
-        // Global Değişkenler
-        const nebulaCanvas = document.getElementById('nebula-canvas');
-        const fwCanvas = document.getElementById('fireworks-canvas');
-        const nCtx = nebulaCanvas.getContext('2d');
-        const fCtx = fwCanvas.getContext('2d');
-        
-        let width, height;
-        let stars = [];
-        let particles = [];
-        let fireworks = [];
-        let isSystemLive = false;
-        let celebrationTriggered = false;
+        const S = {
+            target: new Date("January 1, 2026 00:00:00").getTime(),
+            stars: [],
+            fireworks: [],
+            particles: [],
+            isWarping: false,
+            isCelebration: false,
+            mouse: { x: 0, y: 0 },
+            colors: ['#00f2ff', '#bc13fe', '#ff0055', '#70ff00', '#ffaa00']
+        };
 
-        const targetDate = new Date("January 1, 2026 00:00:00").getTime();
+        const canvases = {
+            star: document.getElementById('star-canvas'),
+            fw: document.getElementById('firework-canvas')
+        };
 
-        /**
-         * 1. SİSTEM BAŞLATICI
-         */
-        function initializeSystem() {
-            document.getElementById('entry-overlay').style.opacity = '0';
+        const ctxs = {
+            star: canvases.star.getContext('2d'),
+            fw: canvases.fw.getContext('2d')
+        };
+
+        // 1. BOOT SEQUENCE
+        function boot() {
+            let p = 0;
+            const bar = document.getElementById('bp');
+            const interval = setInterval(() => {
+                p += Math.random() * 5;
+                if(p >= 100) {
+                    p = 100;
+                    clearInterval(interval);
+                    document.getElementById('startBtn').classList.add('active');
+                }
+                bar.style.width = p + '%';
+            }, 100);
+        }
+
+        function launchSystem() {
+            document.getElementById('boot-overlay').style.opacity = '0';
+            document.getElementById('boot-overlay').style.transform = 'scale(2)';
+            document.getElementById('sys-status').innerText = 'OPERATIONAL';
+            document.getElementById('main-audio').play();
             setTimeout(() => {
-                document.getElementById('entry-overlay').style.display = 'none';
+                document.getElementById('boot-overlay').style.display = 'none';
             }, 1000);
-
-            const audio = document.getElementById('audio-track');
-            audio.play().catch(e => console.log("Müzik başlatılamadı:", e));
-            
-            isSystemLive = true;
-            initNebula();
+            initStars();
             animate();
         }
 
-        /**
-         * 2. BOYUTLANDIRMA VE MOUSE
-         */
+        // 2. DIMENSIONS
         function resize() {
-            width = nebulaCanvas.width = fwCanvas.width = window.innerWidth;
-            height = nebulaCanvas.height = fwCanvas.height = window.innerHeight;
+            Object.values(canvases).forEach(c => {
+                c.width = window.innerWidth;
+                c.height = window.innerHeight;
+            });
         }
         window.addEventListener('resize', resize);
         resize();
 
-        const cursor = document.getElementById('cursor');
+        // 3. MOUSE INTERACTION
         window.addEventListener('mousemove', e => {
-            cursor.style.transform = `translate(${e.clientX}px, ${e.clientY}px)`;
-            // Paneli hafifçe eğ
-            if(!celebrationTriggered) {
-                const xRotate = (window.innerHeight / 2 - e.clientY) / 20;
-                const yRotate = (e.clientX - window.innerWidth / 2) / 20;
-                document.getElementById('main-panel').style.transform = `rotateX(${xRotate}deg) rotateY(${yRotate}deg)`;
+            S.mouse.x = e.clientX;
+            S.mouse.y = e.clientY;
+            document.getElementById('c-ring').style.transform = `translate(${e.clientX - 20}px, ${e.clientY - 20}px)`;
+            
+            if(!S.isCelebration) {
+                const tiltX = (window.innerHeight / 2 - e.clientY) / 25;
+                const tiltY = (e.clientX - window.innerWidth / 2) / 25;
+                document.getElementById('hud-card').style.transform = `rotateX(${tiltX}deg) rotateY(${tiltY}deg)`;
             }
         });
 
-        /**
-         * 3. NEBULA (ARKA PLAN) MOTORU
-         */
+        // 4. PHYSICS & STAR ENGINE
         class Star {
             constructor() {
-                this.x = Math.random() * width;
-                this.y = Math.random() * height;
-                this.z = Math.random() * width;
-                this.size = 1.2;
+                this.reset();
+            }
+            reset() {
+                this.x = (Math.random() - 0.5) * window.innerWidth * 2;
+                this.y = (Math.random() - 0.5) * window.innerHeight * 2;
+                this.z = Math.random() * window.innerWidth;
+                this.px = this.x;
+                this.py = this.y;
             }
             update() {
-                this.z -= 2;
-                if (this.z <= 0) {
-                    this.z = width;
-                    this.x = Math.random() * width;
-                    this.y = Math.random() * height;
-                }
+                this.px = this.x;
+                this.py = this.y;
+                let speed = S.isWarping ? 50 : 2;
+                this.z -= speed;
+                if(this.z < 1) this.reset();
             }
             draw() {
-                let sx = (this.x - width / 2) * (width / this.z) + width / 2;
-                let sy = (this.y - height / 2) * (width / this.z) + height / 2;
-                let r = (width / this.z) * this.size;
-                nCtx.fillStyle = `rgba(255, 255, 255, ${1 - this.z / width})`;
-                nCtx.beginPath();
-                nCtx.arc(sx, sy, r, 0, Math.PI * 2);
-                nCtx.fill();
+                let sx = map(this.x / this.z, 0, 1, 0, window.innerWidth) + window.innerWidth/2;
+                let sy = map(this.y / this.z, 0, 1, 0, window.innerHeight) + window.innerHeight/2;
+                let r = map(this.z, 0, window.innerWidth, 8, 0);
+
+                ctxs.star.fillStyle = "white";
+                ctxs.star.beginPath();
+                ctxs.star.arc(sx, sy, r/2, 0, Math.PI*2);
+                ctxs.star.fill();
+
+                if(S.isWarping) {
+                    ctxs.star.strokeStyle = `rgba(255, 255, 255, ${1 - this.z/window.innerWidth})`;
+                    ctxs.star.lineWidth = r;
+                    ctxs.star.beginPath();
+                    ctxs.star.moveTo(sx, sy);
+                    ctxs.star.lineTo(sx, sy); // Trail logic simplified for performance
+                    ctxs.star.stroke();
+                }
             }
         }
 
-        function initNebula() {
-            for (let i = 0; i < 800; i++) stars.push(new Star());
+        function initStars() {
+            for(let i=0; i<1200; i++) S.stars.push(new Star());
         }
 
-        /**
-         * 4. HAVAİ FİŞEK VE FİZİK MOTORU
-         */
+        // 5. FIREWORKS SYSTEM (PRO PHYSICS)
         class Particle {
             constructor(x, y, color) {
                 this.x = x; this.y = y; this.color = color;
                 this.v = {
-                    x: (Math.random() - 0.5) * (Math.random() * 10),
-                    y: (Math.random() - 0.5) * (Math.random() * 10)
+                    x: (Math.random() - 0.5) * (Math.random() * 12),
+                    y: (Math.random() - 0.5) * (Math.random() * 12)
                 };
                 this.alpha = 1;
-                this.friction = 0.96;
-                this.gravity = 0.15;
-            }
-            draw() {
-                fCtx.globalAlpha = this.alpha;
-                fCtx.fillStyle = this.color;
-                fCtx.beginPath();
-                fCtx.arc(this.x, this.y, 2, 0, Math.PI * 2);
-                fCtx.fill();
+                this.friction = 0.95;
+                this.gravity = 0.12;
             }
             update() {
                 this.v.x *= this.friction;
@@ -318,108 +376,121 @@
                 this.v.y += this.gravity;
                 this.x += this.v.x;
                 this.y += this.v.y;
-                this.alpha -= 0.01;
+                this.alpha -= 0.008;
+            }
+            draw() {
+                ctxs.fw.globalAlpha = this.alpha;
+                ctxs.fw.shadowBlur = 10;
+                ctxs.fw.shadowColor = this.color;
+                ctxs.fw.fillStyle = this.color;
+                ctxs.fw.beginPath();
+                ctxs.fw.arc(this.x, this.y, 2, 0, Math.PI*2);
+                ctxs.fw.fill();
             }
         }
 
         class Firework {
             constructor() {
-                this.x = Math.random() * width;
-                this.y = height;
-                this.targetY = Math.random() * (height / 2);
-                this.color = `hsl(${Math.random() * 360}, 100%, 60%)`;
-                this.speed = 15;
-                this.isBlown = false;
+                this.x = Math.random() * window.innerWidth;
+                this.y = window.innerHeight;
+                this.targetY = Math.random() * (window.innerHeight * 0.5);
+                this.color = S.colors[Math.floor(Math.random()*S.colors.length)];
+                this.speed = 10 + Math.random()*5;
+                this.dead = false;
             }
             update() {
-                if(!this.isBlown) {
-                    this.y -= this.speed;
-                    if(this.y <= this.targetY) {
-                        this.isBlown = true;
-                        this.explode();
-                    }
+                this.y -= this.speed;
+                if(this.y <= this.targetY) {
+                    this.dead = true;
+                    this.explode();
                 }
             }
             draw() {
-                if(!this.isBlown) {
-                    fCtx.fillStyle = this.color;
-                    fCtx.beginPath();
-                    fCtx.arc(this.x, this.y, 3, 0, Math.PI * 2);
-                    fCtx.fill();
-                }
+                ctxs.fw.fillStyle = this.color;
+                ctxs.fw.beginPath();
+                ctxs.fw.arc(this.x, this.y, 3, 0, Math.PI*2);
+                ctxs.fw.fill();
             }
             explode() {
-                for(let i=0; i<80; i++) particles.push(new Particle(this.x, this.y, this.color));
+                for(let i=0; i<100; i++) S.particles.push(new Particle(this.x, this.y, this.color));
             }
         }
 
-        /**
-         * 5. ANA DÖNGÜ (RENDER LOOP)
-         */
+        // 6. MAIN ANIMATION LOOP
         function animate() {
-            nCtx.fillStyle = 'rgba(2, 2, 5, 0.4)';
-            nCtx.fillRect(0, 0, width, height);
-            
-            stars.forEach(s => { s.update(); s.draw(); });
+            // Star Layer
+            ctxs.star.fillStyle = S.isWarping ? 'rgba(0,0,0,0.2)' : 'black';
+            ctxs.star.fillRect(0, 0, window.innerWidth, window.innerHeight);
+            S.stars.forEach(s => { s.update(); s.draw(); });
 
-            fCtx.clearRect(0, 0, width, height);
+            // Firework Layer
+            ctxs.fw.clearRect(0, 0, window.innerWidth, window.innerHeight);
             
-            if(celebrationTriggered || Math.random() < 0.05) {
-                fireworks.push(new Firework());
+            if(S.isCelebration || Math.random() < 0.05) {
+                S.fireworks.push(new Firework());
             }
 
-            fireworks = fireworks.filter(f => !f.isBlown);
-            fireworks.forEach(f => { f.update(); f.draw(); });
+            S.fireworks = S.fireworks.filter(f => !f.dead);
+            S.fireworks.forEach(f => { f.update(); f.draw(); });
 
-            particles = particles.filter(p => p.alpha > 0);
-            particles.forEach(p => { p.update(); p.draw(); });
+            S.particles = S.particles.filter(p => p.alpha > 0);
+            S.particles.forEach(p => { p.update(); p.draw(); });
 
             updateTimer();
             requestAnimationFrame(animate);
         }
 
-        /**
-         * 6. ZAMANLAYICI VE SAHNE GEÇİŞİ
-         */
+        // 7. TIMER & LOGIC
         function updateTimer() {
-            const now = new Date().getTime();
-            const diff = targetDate - now;
-
-            if (diff <= 0 && !celebrationTriggered) {
-                startCelebration();
+            const diff = S.target - new Date().getTime();
+            if(diff <= 0 && !S.isCelebration) {
+                triggerCelebration();
                 return;
             }
+            if(diff <= 10000 && diff > 0) S.isWarping = true; // Last 10 seconds warp
 
             const days = Math.floor(diff / (1000 * 60 * 60 * 24));
             const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+            const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const secs = Math.floor((diff % (1000 * 60)) / 1000);
 
             document.getElementById('d').innerText = days.toString().padStart(2, '0');
             document.getElementById('h').innerText = hours.toString().padStart(2, '0');
-            document.getElementById('m').innerText = minutes.toString().padStart(2, '0');
-            document.getElementById('s').innerText = seconds.toString().padStart(2, '0');
+            document.getElementById('m').innerText = mins.toString().padStart(2, '0');
+            document.getElementById('s').innerText = secs.toString().padStart(2, '0');
         }
 
-        function startCelebration() {
-            celebrationTriggered = true;
-            document.getElementById('lobby').style.display = 'none';
-            const cel = document.getElementById('celebration');
-            cel.style.display = 'flex';
-            
-            // Daktilo efekti ile mesaj
-            const msg = "Tebrikler Kerem! 2025'in tüm tozunu yutmuş olabilirsin ama 2026 senin parladığın yıl olacak. Şimdi ekranın her yerinde patlayan bu ışıklar senin başarın için. Yeni yılın kutlu olsun!";
+        function triggerCelebration() {
+            S.isCelebration = true;
+            S.isWarping = false;
+            document.getElementById('lobby').style.opacity = '0';
+            setTimeout(() => {
+                document.getElementById('lobby').style.display = 'none';
+                const cel = document.getElementById('celebration');
+                cel.style.display = 'flex';
+                typeMessage();
+            }, 1500);
+        }
+
+        function typeMessage() {
+            const m = "KEREM SİSTEMİ: 2026_MODU_AKTİF. Geçmiş sadece bir veri yığınıydı, asıl macera şimdi başlıyor. Bu yıl senin algoritman en yüksek performansta çalışacak. Yeni yıla, yeni Kerem'e ve efsane bir geleceğe merhaba de!";
             let i = 0;
+            const target = document.getElementById('writer');
             function type() {
-                if(i < msg.length) {
-                    document.getElementById('typing-msg').innerHTML += msg.charAt(i);
+                if(i < m.length) {
+                    target.innerHTML += m.charAt(i);
                     i++;
-                    setTimeout(type, 50);
+                    setTimeout(type, 40);
                 }
             }
             type();
         }
 
+        function map(n, start1, stop1, start2, stop2) {
+            return (n - start1) / (stop1 - start1) * (stop2 - start2) + start2;
+        }
+
+        boot();
     </script>
 </body>
 </html>
