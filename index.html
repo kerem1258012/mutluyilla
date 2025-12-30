@@ -1,257 +1,455 @@
-
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>2026 | Yeni Yıl Deneyimi</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2026 | Yeni Yıl Heyecanı</title>
+    <style>
+        /* =========================================
+           MODERN RESET & BASE
+        ========================================= */
+        :root {
+            --primary: #00d4ff;
+            --secondary: #ff00c8;
+            --bg-dark: #02050a;
+            --glass: rgba(255, 255, 255, 0.1);
+        }
 
-<style>
-/* ======================================================
-   GENEL AYARLAR
-====================================================== */
-*{margin:0;padding:0;box-sizing:border-box}
-html,body{
-    width:100%;
-    height:100%;
-    font-family:Segoe UI,Arial,sans-serif;
-    overflow:hidden;
-    color:#fff;
-}
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body, html {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: var(--bg-dark);
+            font-family: 'Poppins', 'Segoe UI', sans-serif;
+            color: white;
+        }
 
-/* ======================================================
-   CANLI ARKAPLAN (GRADIENT + HAREKET)
-====================================================== */
-body{
-    background:
-        radial-gradient(circle at 20% 20%, #ff5edf55, transparent 40%),
-        radial-gradient(circle at 80% 30%, #5e9bff55, transparent 45%),
-        radial-gradient(circle at 50% 80%, #5effb155, transparent 45%),
-        linear-gradient(120deg, #0a0f2b, #120b3f, #08162e);
-    background-size:200% 200%;
-    animation:arkaPlan 18s ease infinite;
-}
-@keyframes arkaPlan{
-    0%{background-position:0% 50%}
-    50%{background-position:100% 50%}
-    100%{background-position:0% 50%}
-}
+        /* =========================================
+           CANVAS & BACKGROUND LAYER
+        ========================================= */
+        #canvas-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+        }
 
-/* ======================================================
-   HAFİF GÜRÜLTÜ (NOISE)
-====================================================== */
-.noise{
-    position:fixed;
-    inset:0;
-    pointer-events:none;
-    opacity:0.04;
-    background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)'/%3E%3C/svg%3E");
-}
+        .overlay {
+            position: fixed;
+            inset: 0;
+            background: radial-gradient(circle at center, transparent 0%, rgba(0,0,0,0.4) 100%);
+            z-index: 1;
+            pointer-events: none;
+        }
 
-/* ======================================================
-   SAĞ ALT KREDİ
-====================================================== */
-#kredi{
-    position:fixed;
-    right:12px;
-    bottom:8px;
-    font-size:clamp(10px,2.5vw,12px);
-    opacity:0.6;
-    z-index:999;
-    white-space:nowrap;
-}
+        /* =========================================
+           LOBBY / COUNTDOWN SECTION
+        ========================================= */
+        #lobby {
+            position: relative;
+            z-index: 10;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 1s ease, transform 1s ease;
+        }
 
-/* ======================================================
-   ORTA MERKEZ SİSTEM
-====================================================== */
-.merkez{
-    position:fixed;
-    inset:0;
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    justify-content:center;
-    text-align:center;
-    padding:20px;
-}
+        .header-box {
+            text-align: center;
+            margin-bottom: 50px;
+            animation: fadeInDown 1.5s ease;
+        }
 
-/* ======================================================
-   BEKLEME ALANI
-====================================================== */
-#bekleme .baslik{
-    font-size:clamp(36px,10vw,72px);
-    letter-spacing:0.35em;
-}
-#bekleme .alt{
-    margin-top:14px;
-    font-size:clamp(12px,3.5vw,18px);
-    opacity:0.7;
-    letter-spacing:0.25em;
-}
-.yukleme{
-    margin-top:50px;
-    width:70%;
-    max-width:360px;
-    height:4px;
-    background:rgba(255,255,255,0.2);
-    overflow:hidden;
-    border-radius:4px;
-}
-.yukleme span{
-    display:block;
-    width:30%;
-    height:100%;
-    background:linear-gradient(90deg,transparent,#fff,transparent);
-    animation:yukle 2.2s infinite;
-}
-@keyframes yukle{
-    from{transform:translateX(-120%)}
-    to{transform:translateX(280%)}
-}
+        #title-2026 {
+            font-size: clamp(4rem, 15vw, 10rem);
+            font-weight: 900;
+            background: linear-gradient(to bottom, #fff, #666);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -5px;
+            line-height: 0.8;
+            margin-bottom: 20px;
+        }
 
-/* ======================================================
-   SAHNE (GERİ SAYIM)
-====================================================== */
-#sahne{display:none}
-.yil{
-    font-size:clamp(80px,20vw,180px);
-    letter-spacing:0.25em;
-    text-shadow:0 0 50px rgba(255,255,255,0.4);
-}
-.geriSayim{
-    display:flex;
-    flex-wrap:wrap;
-    gap:clamp(14px,4vw,40px);
-    margin-top:40px;
-    justify-content:center;
-}
-.kutu span{
-    font-size:clamp(28px,8vw,56px);
-}
-.kutu label{
-    display:block;
-    font-size:clamp(10px,3vw,14px);
-    opacity:0.7;
-    letter-spacing:0.15em;
-}
+        #subtitle {
+            font-size: 1.2rem;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            opacity: 0.7;
+        }
 
-/* ======================================================
-   YENİ YIL PATLAMASI
-====================================================== */
-#patlama{display:none}
-#patlama h1{
-    font-size:clamp(60px,18vw,150px);
-    letter-spacing:0.3em;
-    animation:zoom 0.8s ease forwards;
-}
-#patlama p{
-    margin-top:20px;
-    font-size:clamp(14px,4vw,24px);
-    opacity:0;
-    animation:yukari 1s ease forwards;
-    animation-delay:0.8s;
-}
-@keyframes zoom{
-    from{transform:scale(0.4);opacity:0}
-    to{transform:scale(1);opacity:1}
-}
-@keyframes yukari{
-    from{transform:translateY(30px);opacity:0}
-    to{transform:translateY(0);opacity:1}
-}
+        /* Countdown Cards */
+        #countdown-container {
+            display: flex;
+            gap: 20px;
+            perspective: 1000px;
+        }
 
-/* ======================================================
-   KONFETİ
-====================================================== */
-.konfeti{
-    position:fixed;
-    width:7px;
-    height:16px;
-    top:-20px;
-    animation:dusus linear forwards;
-}
-@keyframes dusus{
-    to{
-        transform:translateY(110vh) rotate(720deg);
-        opacity:0;
-    }
-}
-</style>
+        .time-card {
+            background: var(--glass);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 25px;
+            border-radius: 20px;
+            min-width: 120px;
+            text-align: center;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+            transform: rotateX(10deg);
+            transition: transform 0.3s ease;
+        }
+
+        .time-card:hover {
+            transform: rotateX(0deg) scale(1.05);
+            border-color: var(--primary);
+        }
+
+        .time-card span {
+            display: block;
+            font-size: 3.5rem;
+            font-weight: 800;
+            font-variant-numeric: tabular-nums;
+            text-shadow: 0 0 20px rgba(0, 212, 255, 0.5);
+        }
+
+        .time-card label {
+            font-size: 0.75rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--primary);
+        }
+
+        /* =========================================
+           CELEBRATION SECTION
+        ========================================= */
+        #celebration {
+            position: fixed;
+            inset: 0;
+            z-index: 20;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(10px);
+        }
+
+        .welcome-text {
+            font-size: clamp(5rem, 20vw, 15rem);
+            font-weight: 900;
+            text-shadow: 0 0 50px var(--primary), 0 0 100px var(--secondary);
+            animation: pulse 2s infinite;
+        }
+
+        .quote {
+            font-size: 1.5rem;
+            max-width: 600px;
+            text-align: center;
+            margin-top: 20px;
+            line-height: 1.6;
+            font-style: italic;
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeInUp 1s forwards 1s;
+        }
+
+        /* =========================================
+           ANIMATIONS
+        ========================================= */
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-50px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInUp {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); filter: brightness(1); }
+            50% { transform: scale(1.05); filter: brightness(1.3); }
+        }
+
+        /* =========================================
+           FOOTER & UI
+        ========================================= */
+        #credit {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 100;
+            font-size: 0.8rem;
+            opacity: 0.5;
+            letter-spacing: 1px;
+        }
+
+        .mute-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 100;
+            background: var(--glass);
+            border: none;
+            color: white;
+            padding: 10px;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        @media (max-width: 768px) {
+            #countdown-container { gap: 10px; flex-wrap: wrap; justify-content: center; }
+            .time-card { min-width: 80px; padding: 15px; }
+            .time-card span { font-size: 2rem; }
+        }
+    </style>
 </head>
-
 <body>
 
-<div class="noise"></div>
+<canvas id="canvas-bg"></canvas>
+<div class="overlay"></div>
 
-<div id="kredi">
-Bu Siteyi Kerem Yapmıştır · Instagram: Kerem58012
-</div>
+<button class="mute-btn" onclick="toggleAudio()" id="audioBtn">🔇</button>
 
-<!-- BEKLEME -->
-<div id="bekleme" class="merkez">
-    <div class="baslik">BEKLEME</div>
-    <div class="alt">2026 YÜKLENİYOR</div>
-    <div class="yukleme"><span></span></div>
-</div>
-
-<!-- SAHNE -->
-<div id="sahne" class="merkez">
-    <div class="yil">2026</div>
-    <div class="geriSayim">
-        <div class="kutu"><span id="gun">0</span><label>GÜN</label></div>
-        <div class="kutu"><span id="saat">0</span><label>SAAT</label></div>
-        <div class="kutu"><span id="dakika">0</span><label>DAKİKA</label></div>
-        <div class="kutu"><span id="saniye">0</span><label>SANİYE</label></div>
+<section id="lobby">
+    <div class="header-box">
+        <h1 id="title-2026">2026</h1>
+        <p id="subtitle">Yeni bir çağın eşiğindeyiz</p>
     </div>
-</div>
 
-<!-- PATLAMA -->
-<div id="patlama" class="merkez">
-    <h1>2026</h1>
-    <p>Yeni yıl başladı.</p>
-</div>
+    <div id="countdown-container">
+        <div class="time-card">
+            <span id="days">00</span>
+            <label>Gün</label>
+        </div>
+        <div class="time-card">
+            <span id="hours">00</span>
+            <label>Saat</label>
+        </div>
+        <div class="time-card">
+            <span id="minutes">00</span>
+            <label>Dakika</label>
+        </div>
+        <div class="time-card">
+            <span id="seconds">00</span>
+            <label>Saniye</label>
+        </div>
+    </div>
+</section>
+
+<section id="celebration">
+    <h1 class="welcome-text">2026</h1>
+    <p class="quote">"Geçmişin tozunu üzerinden silkele. <br> Bu yıl, senin hikayenin en parlak sayfası olacak."</p>
+</section>
+
+<div id="credit">CREATIVE BY KEREM · INSTAGRAM: KEREM58012</div>
+
+<audio id="bgMusic" loop>
+    <source src="https://cdn.pixabay.com/audio/2022/11/22/audio_feb579979b.mp3" type="audio/mpeg">
+</audio>
 
 <script>
-const bekleme=document.getElementById("bekleme");
-const sahne=document.getElementById("sahne");
-const patlama=document.getElementById("patlama");
+    /**
+     * HAVAI FIŞEK VE EFEKT MOTORU
+     */
+    const canvas = document.getElementById('canvas-bg');
+    const ctx = canvas.getContext('2d');
+    let width, height, particles = [], fireworks = [];
 
-setTimeout(()=>{
-    bekleme.style.display="none";
-    sahne.style.display="flex";
-},3000);
-
-function guncelle(){
-    const simdi=new Date();
-    const hedef=new Date(2026,0,1,0,0,0);
-    const fark=hedef-simdi;
-
-    if(fark<=0){
-        sahne.style.display="none";
-        patlama.style.display="flex";
-        konfetiBaslat();
-        clearInterval(dongu);
-        return;
+    // Pencere Boyutu Ayarı
+    function resize() {
+        width = canvas.width = window.innerWidth;
+        height = canvas.height = window.innerHeight;
     }
-    gun.textContent=Math.floor(fark/86400000);
-    saat.textContent=Math.floor(fark/3600000)%24;
-    dakika.textContent=Math.floor(fark/60000)%60;
-    saniye.textContent=Math.floor(fark/1000)%60;
-}
-const dongu=setInterval(guncelle,1000);
-guncelle();
+    window.addEventListener('resize', resize);
+    resize();
 
-function konfetiBaslat(){
-    for(let i=0;i<300;i++){
-        const k=document.createElement("div");
-        k.className="konfeti";
-        k.style.left=Math.random()*100+"vw";
-        k.style.background=`hsl(${Math.random()*360},100%,65%)`;
-        k.style.animationDuration=(Math.random()*3+2)+"s";
-        document.body.appendChild(k);
-        setTimeout(()=>k.remove(),5000);
+    // Yardımcı Fonksiyonlar
+    const random = (min, max) => Math.random() * (max - min) + min;
+
+    class Particle {
+        constructor(x, y, color, velocity) {
+            this.x = x;
+            this.y = y;
+            this.color = color;
+            this.velocity = velocity;
+            this.alpha = 1;
+            this.friction = 0.95;
+            this.gravity = 0.15;
+        }
+
+        draw() {
+            ctx.save();
+            ctx.globalAlpha = this.alpha;
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, 2, 0, Math.PI * 2);
+            ctx.fillStyle = this.color;
+            ctx.fill();
+            ctx.restore();
+        }
+
+        update() {
+            this.velocity.x *= this.friction;
+            this.velocity.y *= this.friction;
+            this.velocity.y += this.gravity;
+            this.x += this.velocity.x;
+            this.y += this.velocity.y;
+            this.alpha -= 0.01;
+        }
     }
-}
+
+    class Firework {
+        constructor(x, y, targetY, color) {
+            this.x = x;
+            this.y = height;
+            this.targetY = targetY;
+            this.color = color;
+            this.velocity = { x: random(-1, 1), y: random(-8, -12) };
+            this.alive = true;
+        }
+
+        draw() {
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, 3, 0, Math.PI * 2);
+            ctx.fillStyle = this.color;
+            ctx.fill();
+        }
+
+        update() {
+            this.x += this.velocity.x;
+            this.y += this.velocity.y;
+            if (this.y <= this.targetY) {
+                this.alive = false;
+                this.explode();
+            }
+        }
+
+        explode() {
+            const particleCount = 80;
+            const angleIncrement = (Math.PI * 2) / particleCount;
+            for (let i = 0; i < particleCount; i++) {
+                const velocity = {
+                    x: Math.cos(angleIncrement * i) * random(2, 8),
+                    y: Math.sin(angleIncrement * i) * random(2, 8)
+                };
+                particles.push(new Particle(this.x, this.y, this.color, velocity));
+            }
+        }
+    }
+
+    function animate() {
+        ctx.fillStyle = 'rgba(2, 5, 10, 0.2)'; // Kuyruklu efekt için az opak temizleme
+        ctx.fillRect(0, 0, width, height);
+
+        fireworks.forEach((fw, index) => {
+            fw.update();
+            fw.draw();
+            if (!fw.alive) fireworks.splice(index, 1);
+        });
+
+        particles.forEach((p, index) => {
+            if (p.alpha <= 0) {
+                particles.splice(index, 1);
+            } else {
+                p.update();
+                p.draw();
+            }
+        });
+
+        requestAnimationFrame(animate);
+    }
+    animate();
+
+    // Otomatik Havai Fişek Atıcı (Yeni Yıl Başlayınca Hızlanacak)
+    let fireworkInterval = 1500;
+    function launchFirework() {
+        const x = random(100, width - 100);
+        const y = random(100, height / 2);
+        const color = `hsl(${random(0, 360)}, 100%, 60%)`;
+        fireworks.push(new Firework(x, height, y, color));
+        setTimeout(launchFirework, fireworkInterval);
+    }
+    launchFirework();
+
+    /**
+     * GERİ SAYIM MANTIĞI
+     */
+    const targetTime = new Date("January 1, 2026 00:00:00").getTime();
+    
+    function updateCountdown() {
+        const now = new Date().getTime();
+        const diff = targetTime - now;
+
+        if (diff <= 0) {
+            startCelebration();
+            return;
+        }
+
+        const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        const s = Math.floor((diff % (1000 * 60)) / 1000);
+
+        document.getElementById('days').innerText = d.toString().padStart(2, '0');
+        document.getElementById('hours').innerText = h.toString().padStart(2, '0');
+        document.getElementById('minutes').innerText = m.toString().padStart(2, '0');
+        document.getElementById('seconds').innerText = s.toString().padStart(2, '0');
+    }
+
+    const timer = setInterval(updateCountdown, 1000);
+
+    function startCelebration() {
+        clearInterval(timer);
+        document.getElementById('lobby').style.display = 'none';
+        document.getElementById('celebration').style.display = 'flex';
+        fireworkInterval = 300; // Havai fişekleri sıklaştır
+        
+        // Ekstra kutlama efektleri
+        setInterval(() => {
+            for(let i=0; i<5; i++) {
+                const x = random(0, width);
+                const color = `hsl(${random(0, 360)}, 100%, 50%)`;
+                fireworks.push(new Firework(x, height, random(100, height/2), color));
+            }
+        }, 1000);
+    }
+
+    /**
+     * SES KONTROLÜ
+     */
+    function toggleAudio() {
+        const audio = document.getElementById('bgMusic');
+        const btn = document.getElementById('audioBtn');
+        if (audio.paused) {
+            audio.play();
+            btn.innerText = '🔊';
+        } else {
+            audio.pause();
+            btn.innerText = '🔇';
+        }
+    }
+
+    // Yıldız Arka Planı Ekleme
+    function createStars() {
+        for(let i=0; i<100; i++) {
+            const star = document.createElement('div');
+            star.style.position = 'absolute';
+            star.style.width = '2px';
+            star.style.height = '2px';
+            star.style.background = 'white';
+            star.style.top = Math.random() * 100 + '%';
+            star.style.left = Math.random() * 100 + '%';
+            star.style.opacity = Math.random();
+            star.style.zIndex = '0';
+            document.body.appendChild(star);
+        }
+    }
+    createStars();
 </script>
 
 </body>
