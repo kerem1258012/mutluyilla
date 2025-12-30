@@ -3,302 +3,256 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>2025 | Yeni Yıl Kutlu Olsun</title>
+<title>2025 | Bekleme Alanı</title>
 
 <style>
-/* =========================
-   RESET & GENEL AYARLAR
-========================= */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+/* ================= RESET ================= */
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{
+    width:100%;height:100%;
+    background:#000;color:#fff;
+    font-family:Segoe UI,Arial;
+    overflow:hidden;
 }
 
-html, body {
-    width: 100%;
-    height: 100%;
-    background: radial-gradient(circle at top, #0a0a0a, #000);
-    color: #fff;
-    font-family: 'Segoe UI', Arial, sans-serif;
-    overflow-x: hidden;
+/* ================= CREDIT ================= */
+#credit{
+    position:fixed;
+    right:12px;
+    bottom:10px;
+    font-size:11px;
+    opacity:.35;
+    letter-spacing:1px;
+    z-index:999;
 }
 
-/* =========================
-   LOADING
-========================= */
-#loader {
-    position: fixed;
-    inset: 0;
-    background: #000;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-    z-index: 9999;
+/* ================= GLITCH BG ================= */
+.bg{
+    position:fixed;inset:0;
+    background:
+        repeating-linear-gradient(
+            0deg,
+            #000 0px,
+            #000 2px,
+            #050505 3px
+        );
+    animation:noise .2s infinite;
+    z-index:-1;
+}
+@keyframes noise{
+    0%{transform:translate(0,0)}
+    25%{transform:translate(1px,-1px)}
+    50%{transform:translate(-1px,1px)}
+    75%{transform:translate(1px,1px)}
+    100%{transform:translate(0,0)}
 }
 
-#loader span {
-    letter-spacing: 4px;
-    opacity: 0.7;
+/* ================= WAITING ================= */
+#waiting{
+    position:fixed;inset:0;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+}
+.wait-title{
+    font-size:3.8rem;
+    letter-spacing:14px;
+}
+.wait-sub{
+    margin-top:14px;
+    font-size:.85rem;
+    opacity:.45;
+    letter-spacing:4px;
+}
+.scan{
+    margin-top:40px;
+    width:280px;height:2px;
+    background:#111;
+    overflow:hidden;
+}
+.scan span{
+    display:block;
+    width:40%;height:100%;
+    background:linear-gradient(90deg,transparent,#fff,transparent);
+    animation:scan 2s infinite;
+}
+@keyframes scan{
+    from{transform:translateX(-100%)}
+    to{transform:translateX(220%)}
 }
 
-.loader-bar {
-    width: 260px;
-    height: 4px;
-    background: #111;
-    margin-top: 20px;
-    overflow: hidden;
+/* ================= STAGE ================= */
+#stage{
+    position:fixed;inset:0;
+    display:none;
+    align-items:center;
+    justify-content:center;
+    flex-direction:column;
+}
+.year{
+    font-size:9rem;
+    letter-spacing:18px;
+    animation:flicker 2.5s infinite alternate;
+}
+@keyframes flicker{
+    from{text-shadow:0 0 10px #fff}
+    to{text-shadow:0 0 50px #fff}
+}
+.countdown{
+    display:flex;
+    gap:45px;
+    margin-top:45px;
+}
+.box{text-align:center}
+.box span{font-size:3rem}
+.box label{
+    font-size:.7rem;
+    opacity:.45;
+    letter-spacing:2px;
 }
 
-.loader-fill {
-    height: 100%;
-    width: 0%;
-    background: linear-gradient(90deg, #fff, #888);
-    animation: load 3.5s linear forwards;
+/* ================= BOOM ================= */
+#boom{
+    position:fixed;inset:0;
+    display:none;
+    align-items:center;
+    justify-content:center;
+    flex-direction:column;
+    background:#000;
+}
+#boom h1{
+    font-size:5.5rem;
+    letter-spacing:12px;
+    animation:zoom .9s ease forwards;
+}
+#boom p{
+    margin-top:25px;
+    font-size:1.3rem;
+    opacity:0;
+    animation:fadeUp 1s ease forwards;
+    animation-delay:1s;
+}
+@keyframes zoom{
+    from{transform:scale(.4);opacity:0}
+    to{transform:scale(1);opacity:1}
+}
+@keyframes fadeUp{
+    from{transform:translateY(30px);opacity:0}
+    to{transform:translateY(0);opacity:1}
 }
 
-@keyframes load {
-    to { width: 100%; }
+/* ================= CONFETTI ================= */
+.confetti{
+    position:fixed;
+    width:6px;height:14px;
+    top:-20px;
+    animation:fall linear forwards;
 }
-
-/* =========================
-   ARKA PLAN YILDIZLAR
-========================= */
-.star {
-    position: fixed;
-    width: 2px;
-    height: 2px;
-    background: white;
-    opacity: 0.4;
-    animation: twinkle infinite alternate;
-}
-
-@keyframes twinkle {
-    from { opacity: 0.2; }
-    to { opacity: 1; }
-}
-
-/* =========================
-   ANA BÖLÜM
-========================= */
-section {
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-    text-align: center;
-    position: relative;
-}
-
-h1 {
-    font-size: 6rem;
-    letter-spacing: 10px;
-    animation: glow 2.5s infinite alternate;
-}
-
-@keyframes glow {
-    from { text-shadow: 0 0 10px #fff; }
-    to { text-shadow: 0 0 30px #fff; }
-}
-
-.subtitle {
-    margin-top: 20px;
-    font-size: 1.3rem;
-    opacity: 0.8;
-}
-
-/* =========================
-   COUNTDOWN
-========================= */
-#countdown {
-    display: flex;
-    gap: 40px;
-    margin-top: 60px;
-}
-
-.box {
-    min-width: 90px;
-}
-
-.box span {
-    font-size: 3rem;
-    display: block;
-}
-
-.box label {
-    font-size: 0.8rem;
-    opacity: 0.6;
-}
-
-/* =========================
-   KUTLAMA EKRANI
-========================= */
-#celebration {
-    display: none;
-}
-
-#celebration h2 {
-    font-size: 4rem;
-    animation: pop 1s ease forwards;
-}
-
-#celebration p {
-    margin-top: 20px;
-    font-size: 1.2rem;
-    opacity: 0.8;
-}
-
-@keyframes pop {
-    from {
-        transform: scale(0.6);
-        opacity: 0;
-    }
-    to {
-        transform: scale(1);
-        opacity: 1;
+@keyframes fall{
+    to{
+        transform:translateY(110vh) rotate(720deg);
+        opacity:0;
     }
 }
 
-/* =========================
-   KONFETİ
-========================= */
-.confetti {
-    position: fixed;
-    width: 8px;
-    height: 14px;
-    background: white;
-    top: -20px;
-    animation: fall linear forwards;
+/* ================= FLASH ================= */
+.flash{
+    position:fixed;inset:0;
+    background:#fff;
+    animation:flash .4s ease forwards;
 }
-
-@keyframes fall {
-    to {
-        transform: translateY(110vh) rotate(360deg);
-        opacity: 0;
-    }
-}
-
-/* =========================
-   FOOTER
-========================= */
-footer {
-    height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    opacity: 0.4;
+@keyframes flash{
+    from{opacity:1}
+    to{opacity:0}
 }
 </style>
 </head>
 
 <body>
 
-<!-- LOADER -->
-<div id="loader">
-    <span>2025 BAŞLATILIYOR</span>
-    <div class="loader-bar">
-        <div class="loader-fill"></div>
+<div class="bg"></div>
+
+<div id="credit">
+Bu Siteyi Kerem Yapmıştır · Instagram: Kerem58012
+</div>
+
+<!-- WAITING -->
+<div id="waiting">
+    <div class="wait-title">BEKLEME ALANI</div>
+    <div class="wait-sub">2025 YÜKLENİYOR</div>
+    <div class="scan"><span></span></div>
+</div>
+
+<!-- STAGE -->
+<div id="stage">
+    <div class="year">2025</div>
+    <div class="countdown">
+        <div class="box"><span id="d">00</span><label>GÜN</label></div>
+        <div class="box"><span id="h">00</span><label>SAAT</label></div>
+        <div class="box"><span id="m">00</span><label>DAKİKA</label></div>
+        <div class="box"><span id="s">00</span><label>SANİYE</label></div>
     </div>
 </div>
 
-<!-- ANA EKRAN -->
-<section id="main">
-    <h1>2025</h1>
-    <div class="subtitle">Yeni Bir Yıl. Yeni Bir Sayfa.</div>
-
-    <div id="countdown">
-        <div class="box">
-            <span id="days">00</span>
-            <label>GÜN</label>
-        </div>
-        <div class="box">
-            <span id="hours">00</span>
-            <label>SAAT</label>
-        </div>
-        <div class="box">
-            <span id="minutes">00</span>
-            <label>DAKİKA</label>
-        </div>
-        <div class="box">
-            <span id="seconds">00</span>
-            <label>SANİYE</label>
-        </div>
-    </div>
-</section>
-
-<!-- KUTLAMA -->
-<section id="celebration">
-    <h2>🎉 MUTLU YILLAR 🎉</h2>
-    <p>2025 hepimize sağlık, güç ve güzel anlar getirsin.</p>
-</section>
-
-<footer>
-    <div>Yeni Yıl Kutlaması</div>
-</footer>
+<!-- BOOM -->
+<div id="boom">
+    <h1>🎆 2025 🎆</h1>
+    <p>Yeni yıl başladı.</p>
+</div>
 
 <script>
-/* LOADER */
-window.addEventListener("load", () => {
-    setTimeout(() => {
-        document.getElementById("loader").style.display = "none";
-    }, 3600);
-});
+const waiting = document.getElementById("waiting");
+const stage = document.getElementById("stage");
+const boom = document.getElementById("boom");
 
-/* YILDIZLAR */
-for (let i = 0; i < 180; i++) {
-    const star = document.createElement("div");
-    star.className = "star";
-    star.style.left = Math.random() * 100 + "vw";
-    star.style.top = Math.random() * 100 + "vh";
-    star.style.animationDuration = (Math.random() * 3 + 2) + "s";
-    document.body.appendChild(star);
-}
+/* WAIT → STAGE */
+setTimeout(()=>{
+    waiting.style.display="none";
+    stage.style.display="flex";
+},3500);
 
 /* COUNTDOWN */
-const main = document.getElementById("main");
-const celebration = document.getElementById("celebration");
-
-function updateCountdown() {
+function update(){
     const now = new Date();
-    const target = new Date(now.getFullYear() + 1, 0, 1, 0, 0, 0);
-    const diff = target - now;
+    const target = new Date(now.getFullYear()+1,0,1);
+    const diff = target-now;
 
-    if (diff <= 0) {
-        main.style.display = "none";
-        celebration.style.display = "flex";
-        startConfetti();
-        clearInterval(timer);
+    if(diff<=0){
+        stage.style.display="none";
+        boom.style.display="flex";
+        flash();
+        confetti();
+        clearInterval(loop);
         return;
     }
+    d.textContent=Math.floor(diff/86400000);
+    h.textContent=Math.floor(diff/3600000)%24;
+    m.textContent=Math.floor(diff/60000)%60;
+    s.textContent=Math.floor(diff/1000)%60;
+}
+const loop=setInterval(update,1000);
+update();
 
-    const d = Math.floor(diff / (1000 * 60 * 60 * 24));
-    const h = Math.floor((diff / (1000 * 60 * 60)) % 24);
-    const m = Math.floor((diff / (1000 * 60)) % 60);
-    const s = Math.floor((diff / 1000) % 60);
-
-    days.textContent = String(d).padStart(2, "0");
-    hours.textContent = String(h).padStart(2, "0");
-    minutes.textContent = String(m).padStart(2, "0");
-    seconds.textContent = String(s).padStart(2, "0");
+/* CONFETTI */
+function confetti(){
+    for(let i=0;i<450;i++){
+        const c=document.createElement("div");
+        c.className="confetti";
+        c.style.left=Math.random()*100+"vw";
+        c.style.background=`hsl(${Math.random()*360},100%,60%)`;
+        c.style.animationDuration=(Math.random()*3+2)+"s";
+        document.body.appendChild(c);
+        setTimeout(()=>c.remove(),5000);
+    }
 }
 
-const timer = setInterval(updateCountdown, 1000);
-updateCountdown();
-
-/* KONFETİ */
-function startConfetti() {
-    for (let i = 0; i < 250; i++) {
-        const c = document.createElement("div");
-        c.className = "confetti";
-        c.style.left = Math.random() * 100 + "vw";
-        c.style.background = `hsl(${Math.random() * 360}, 100%, 70%)`;
-        c.style.animationDuration = (Math.random() * 3 + 2) + "s";
-        document.body.appendChild(c);
-
-        setTimeout(() => c.remove(), 5000);
-    }
+/* FLASH */
+function flash(){
+    const f=document.createElement("div");
+    f.className="flash";
+    document.body.appendChild(f);
+    setTimeout(()=>f.remove(),500);
 }
 </script>
 
