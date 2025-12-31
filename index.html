@@ -3,107 +3,308 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>2026 KEREM </title>
+    <title>2026 KEREM  KUTLAMA </title>
     <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Montserrat:wght@100;400;900&family=Playfair+Display:ital,wght@1,900&display=swap" rel="stylesheet">
+    
     <style>
+        /* ================================================================
+           PROJECT: KEREM58012
+           ================================================================ */
         :root {
             --gold: #ffd700;
-            --gold-glow: rgba(255, 215, 0, 0.6);
-            --red: #ff3131;
-            --glass: rgba(255, 255, 255, 0.07);
+            --gold-glow: rgba(255, 215, 0, 0.8);
+            --red: #ff0000;
+            --dark-red: #4a0000;
+            --snow: #ffffff;
+            --glass: rgba(255, 255, 255, 0.05);
+            --neon-blue: #00f2ff;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body { background: #000; overflow: hidden; width: 100vw; height: 100vh; font-family: 'Montserrat', sans-serif; color: white; }
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
+            -webkit-tap-highlight-color: transparent; 
+            user-select: none; 
+            -webkit-user-select: none;
+        }
 
+        body {
+            background: #000; 
+            overflow: hidden; 
+            width: 100vw; 
+            height: 100vh;
+            font-family: 'Montserrat', sans-serif; 
+            color: white;
+            transition: transform 0.05s ease-out;
+        }
+
+        /* ARKA PLAN KATMANLARI */
         #master-bg {
-            position: fixed; inset: 0; z-index: -2;
-            background: radial-gradient(circle at center, #2a0000 0%, #000 100%);
-            animation: bgPulse 8s infinite alternate;
+            position: fixed; 
+            inset: 0; 
+            z-index: -2;
+            background: radial-gradient(circle at center, var(--dark-red) 0%, #000 100%);
+            animation: bgShift 15s infinite alternate;
         }
-        @keyframes bgPulse { 0% { transform: scale(1); } 100% { transform: scale(1.1); } }
 
-        .light-string { position: fixed; top: 0; width: 100%; height: 20px; display: flex; justify-content: space-around; z-index: 1000; }
+        @keyframes bgShift { 
+            0% { filter: hue-rotate(0deg); transform: scale(1); } 
+            50% { filter: hue-rotate(20deg); transform: scale(1.05); }
+            100% { filter: hue-rotate(45deg); transform: scale(1); } 
+        }
+
+        /* YILBAŞI IŞIKLARI */
+        .light-string {
+            position: fixed; 
+            top: 0; 
+            width: 100%; 
+            height: 25px;
+            display: flex; 
+            justify-content: space-around; 
+            z-index: 1000;
+            pointer-events: none;
+        }
+
         .bulb {
-            width: 10px; height: 14px; border-radius: 50%;
+            width: 12px; 
+            height: 18px; 
+            border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
             animation: lightBlink var(--s) infinite alternate;
             box-shadow: 0 0 15px currentColor;
+            position: relative;
         }
-        @keyframes lightBlink { 0% { opacity: 0.3; } 100% { opacity: 1; filter: brightness(1.5); } }
 
-        canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; }
+        .bulb::before {
+            content: '';
+            position: absolute;
+            top: -5px;
+            left: 3px;
+            width: 6px;
+            height: 6px;
+            background: #444;
+        }
+
+        @keyframes lightBlink { 
+            0% { opacity: 0.2; transform: scale(0.8) translateY(0); } 
+            100% { opacity: 1; transform: scale(1.1) translateY(5px); } 
+        }
+
+        /* CANVAS KATMANLARI */
+        canvas { 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%; 
+        }
         #fire-layer { z-index: 20; pointer-events: none; }
-        #snow-layer { z-index: 5; pointer-events: none; opacity: 0.6; }
+        #snow-layer { z-index: 5; pointer-events: none; }
 
+        /* GİRİŞ EKRANI */
         #gate {
-            position: fixed; inset: 0; z-index: 9999; background: #000;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            transition: 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+            position: fixed; 
+            inset: 0; 
+            z-index: 99999;
+            background: #000; 
+            display: flex; 
+            flex-direction: column;
+            align-items: center; 
+            justify-content: center;
+            transition: 1.5s cubic-bezier(0.7, 0, 0.3, 1);
         }
+
         .name-box {
-            background: var(--glass); padding: 40px; border-radius: 30px;
-            border: 1px solid rgba(255,215,0,0.4); text-align: center; backdrop-filter: blur(15px);
+            background: var(--glass); 
+            padding: 50px; 
+            border-radius: 30px;
+            border: 2px solid var(--gold); 
+            text-align: center;
+            backdrop-filter: blur(15px);
+            box-shadow: 0 0 50px rgba(255, 215, 0, 0.2);
         }
+
         .n-input {
-            width: 100%; padding: 15px; margin: 25px 0; background: #000;
-            border: 1px solid var(--gold); color: #fff; text-align: center;
-            border-radius: 12px; font-size: 1.1rem; outline: none;
+            width: 100%; 
+            padding: 15px; 
+            margin: 25px 0;
+            background: rgba(0,0,0,0.7); 
+            border: 1px solid var(--gold); 
+            color: #fff; 
+            text-align: center;
+            border-radius: 10px;
+            font-size: 1.2rem;
+            letter-spacing: 2px;
+            outline: none;
         }
+
         .start-btn {
-            width: 130px; height: 130px; background: var(--gold); border-radius: 50%;
-            border: none; font-weight: 900; cursor: pointer;
-            box-shadow: 0 0 40px var(--gold-glow); transition: 0.4s;
+            width: 160px; 
+            height: 160px; 
+            background: var(--gold);
+            border-radius: 50%; 
+            border: none; 
+            font-weight: 900;
+            font-size: 1.2rem;
+            cursor: pointer; 
+            box-shadow: 0 0 50px var(--gold-glow);
+            animation: pulse 2s infinite;
+            transition: 0.3s;
         }
-        .start-btn:hover { transform: scale(1.1); box-shadow: 0 0 60px var(--gold); }
 
+        .start-btn:hover {
+            background: #fff;
+            transform: scale(1.1);
+            box-shadow: 0 0 80px #fff;
+        }
+
+        @keyframes pulse { 
+            0% { transform: scale(1); box-shadow: 0 0 20px var(--gold-glow); } 
+            50% { transform: scale(1.08); box-shadow: 0 0 60px var(--gold-glow); } 
+            100% { transform: scale(1); box-shadow: 0 0 20px var(--gold-glow); } 
+        }
+
+        /* ANA UI */
         #ui {
-            position: relative; z-index: 100; height: 100vh;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            opacity: 0; transition: 2s;
-        }
-        .card {
-            background: var(--glass); backdrop-filter: blur(25px);
-            padding: 60px 40px; border-radius: 60px; border: 1px solid rgba(255,215,0,0.2);
-            text-align: center; width: 90%; max-width: 750px;
-            box-shadow: 0 25px 50px rgba(0,0,0,0.5);
-        }
-        .year-txt {
-            font-size: clamp(6rem, 20vw, 15rem); font-family: 'Playfair Display', serif;
-            background: linear-gradient(to bottom, #fff, var(--gold), #b8860b);
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            filter: drop-shadow(0 0 40px var(--gold-glow)); line-height: 0.9;
+            position: relative; 
+            z-index: 100;
+            height: 100vh; 
+            display: flex; 
+            flex-direction: column;
+            align-items: center; 
+            justify-content: center;
+            opacity: 0; 
+            transition: 2.5s ease-in-out;
         }
 
-        .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 40px; }
-        .u { background: rgba(0,0,0,0.4); padding: 20px 10px; border-radius: 20px; border-bottom: 4px solid var(--gold); }
-        .u span { display: block; font-size: clamp(1.5rem, 5vw, 3rem); font-weight: 900; }
-        .u b { font-size: 0.65rem; color: var(--gold); letter-spacing: 2px; text-transform: uppercase; }
+        .card {
+            background: var(--glass); 
+            backdrop-filter: blur(30px);
+            padding: 60px; 
+            border-radius: 50px; 
+            border: 1.5px solid var(--gold);
+            text-align: center; 
+            width: 90%; 
+            max-width: 850px;
+            box-shadow: 0 20px 100px rgba(0,0,0,0.8);
+        }
+
+        .year-txt {
+            font-size: clamp(5rem, 18vw, 13rem); 
+            font-family: 'Playfair Display', serif;
+            background: linear-gradient(to bottom, #fff 20%, var(--gold) 60%, #8a6d3b 100%);
+            -webkit-background-clip: text; 
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 0 40px var(--gold-glow));
+            margin: 10px 0;
+            font-style: italic;
+        }
+
+        /* SAYAÇ */
+        .grid { 
+            display: grid; 
+            grid-template-columns: repeat(4, 1fr); 
+            gap: 15px; 
+            margin-top: 30px; 
+        }
+
+        .u { 
+            background: rgba(0,0,0,0.6); 
+            padding: 25px 10px; 
+            border-radius: 20px; 
+            border-bottom: 4px solid var(--gold);
+            transition: 0.4s;
+        }
+
+        .u:hover {
+            transform: translateY(-10px);
+            background: rgba(255, 215, 0, 0.1);
+        }
+
+        .u span { 
+            display: block; 
+            font-size: clamp(1.8rem, 4vw, 3rem); 
+            font-weight: 900; 
+            text-shadow: 0 0 20px var(--gold);
+        }
+
+        .u b { 
+            font-size: 0.75rem; 
+            color: var(--gold); 
+            letter-spacing: 3px; 
+            text-transform: uppercase;
+        }
+
+        /* KEREM ZIRHLI İMZA */
+        #kerem-container {
+            position: fixed; 
+            bottom: 25px; 
+            right: 25px; 
+            z-index: 100000;
+            pointer-events: all;
+        }
 
         .kerem-btn {
-            position: fixed; bottom: 30px; right: 30px; background: var(--gold);
-            color: #000; padding: 16px 32px; border-radius: 50px;
-            text-decoration: none; font-weight: 900; z-index: 10000;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.4); transition: 0.4s;
+            background: var(--gold) !important; 
+            color: #000 !important; 
+            padding: 18px 35px;
+            border-radius: 100px; 
+            text-decoration: none !important; 
+            font-weight: 900;
+            font-size: 1rem;
+            display: block; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5); 
+            transition: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 2px solid #000;
         }
-        .kerem-btn:hover { transform: scale(1.1) rotate(-3deg); }
 
+        .kerem-btn:hover { 
+            transform: scale(1.15) rotate(-5deg); 
+            box-shadow: 0 0 50px var(--gold);
+            background: #fff !important;
+        }
+
+        /* FİNAL EKRANI */
         #finale {
-            position: fixed; inset: 0; background: #000; z-index: 20000;
-            display: none; flex-direction: column; align-items: center; justify-content: center;
-            text-align: center; font-family: 'Great Vibes', cursive;
+            position: fixed; 
+            inset: 0; 
+            background: #000; 
+            z-index: 20000;
+            display: none; 
+            flex-direction: column;
+            align-items: center; 
+            justify-content: center;
+            text-align: center; 
+            font-family: 'Great Vibes', cursive;
+        }
+
+        #f-msg {
+            font-size: clamp(3rem, 10vw, 7rem);
+            color: var(--gold);
+            text-shadow: 0 0 50px var(--gold);
+        }
+
+        /* MOBİL AYARLAR */
+        @media (max-width: 600px) {
+            .card { padding: 30px 15px; }
+            .grid { gap: 8px; }
+            .u { padding: 15px 5px; }
+            .year-txt { font-size: 5rem; }
+            .start-btn { width: 130px; height: 130px; }
         }
     </style>
 </head>
-<body onclick="spawnFirework(event)">
+<body oncontextmenu="return false;" onkeydown="if(event.keyCode==123 || (event.ctrlKey && event.shiftKey && event.keyCode==73)) return false;">
 
     <div id="master-bg"></div>
     <div class="light-string" id="lights"></div>
 
     <div id="gate">
         <div class="name-box">
-            <h2 style="color: var(--gold); font-family: 'Great Vibes'; font-size: 3rem;">Hoş Geldin</h2>
-            <input type="text" id="userName" class="n-input" placeholder="İsmini Bırak..." maxlength="15">
-            <button class="start-btn" onclick="startApp()">GİRİŞ YAP</button>
+            <h2 style="color: var(--gold); font-family: 'Great Vibes'; font-size: 3.5rem; margin-bottom: 10px;">Kerem Omni-Verse</h2>
+            <p style="letter-spacing: 3px; font-size: 0.8rem; opacity: 0.7;">2026 EKSİKSİZ DENEYİM</p>
+            <input type="text" id="userName" class="n-input" placeholder="İsminizi Yazın..." maxlength="15">
+            <button class="start-btn" onclick="startApp()">BAŞLAT</button>
         </div>
     </div>
 
@@ -112,22 +313,25 @@
 
     <main id="ui">
         <div class="card">
-            <h3 style="font-family: 'Great Vibes'; font-size: 3rem; color: var(--gold); margin-bottom: 20px;">Yeni Yıl Coşkusu</h3>
+            <h3 style="font-family: 'Great Vibes'; font-size: 3rem; color: var(--gold); margin-bottom: 5px;">Mutlu Yıllar</h3>
             <h1 class="year-txt" id="y-glow">2026</h1>
             <div class="grid">
-                <div class="u"><span id="d">00</span><b>Gün</b></div>
-                <div class="u"><span id="h">00</span><b>Saat</b></div>
-                <div class="u"><span id="m">00</span><b>Dakika</b></div>
-                <div class="u"><span id="s">00</span><b>Saniye</b></div>
+                <div class="u"><span id="d">00</span><b>GÜN</b></div>
+                <div class="u"><span id="h">00</span><b>SAAT</b></div>
+                <div class="u"><span id="m">00</span><b>DAK</b></div>
+                <div class="u"><span id="s">00</span><b>SAN</b></div>
             </div>
+            <p style="margin-top: 30px; font-weight: 100; letter-spacing: 5px; opacity: 0.5;">YENİ BİR ÇAĞ BAŞLIYOR</p>
         </div>
     </main>
 
-    <a href="https://www.instagram.com/kerem58012" target="_blank" class="kerem-btn">@kerem58012</a>
+    <div id="kerem-container">
+        <a href="https://www.instagram.com/kerem58012" target="_blank" id="k-link" class="kerem-btn">Oluşturan: Kerem</a>
+    </div>
 
     <div id="finale">
-        <h1 id="f-msg" style="font-size: 6rem; color: var(--gold); text-shadow: 0 0 40px var(--gold);"></h1>
-        <p style="font-family: 'Montserrat'; letter-spacing: 8px; font-weight: 100; color: #fff; margin-top: 20px;">YENİ YILIN KUTLU OLSUN</p>
+        <h1 id="f-msg"></h1>
+        <p style="font-family: 'Montserrat'; font-size: 1.2rem; letter-spacing: 10px; color: #fff; margin-top: 20px; opacity: 0.8;">HOŞ GELDİN 2026</p>
     </div>
 
     <audio id="audio" loop><source src="https://cdn.pixabay.com/audio/2023/11/24/audio_9673479632.mp3"></audio>
@@ -135,98 +339,181 @@
     <script>
         const cfg = {
             target: new Date("January 1, 2026 00:00:00").getTime(),
-            snow: [], fireworks: [], name: "Kerem", active: false
+            snow: [], 
+            fireworks: [], 
+            name: "Kerem", 
+            active: false
         };
 
         const sCtx = document.getElementById('snow-layer').getContext('2d');
         const fCtx = document.getElementById('fire-layer').getContext('2d');
 
+        // KEREM İMZA KORUMA KALKANI (MODİFİYE EDİLEMEZ)
+        function protectSignature() {
+            const link = document.getElementById('k-link');
+            const container = document.getElementById('kerem-container');
+            
+            if (!link || !container) {
+                document.body.innerHTML = "<h1 style='color:white; text-align:center; margin-top:20%;'>KOD İLE OYNAMA! SAYFAYI YENİLE.</h1>";
+                setTimeout(() => location.reload(), 2000);
+                return;
+            }
+            
+            if (link.href !== "https://www.instagram.com/kerem58012") {
+                link.href = "https://www.instagram.com/kerem58012";
+            }
+            
+            if (link.innerText !== "Oluşturan: Kerem") {
+                link.innerText = "Oluşturan: Kerem";
+            }
+            
+            if (window.getComputedStyle(container).display === 'none' || window.getComputedStyle(container).opacity === '0') {
+                container.style.display = 'block';
+                container.style.opacity = '1';
+            }
+        }
+        setInterval(protectSignature, 200);
+
         function startApp() {
-            const n = document.getElementById('userName').value;
-            if(n) cfg.name = n;
+            const inputName = document.getElementById('userName').value;
+            if(inputName) cfg.name = inputName;
+            
             document.getElementById('gate').style.opacity = '0';
-            document.getElementById('gate').style.transform = 'scale(0.8)';
+            document.getElementById('gate').style.transform = 'scale(1.2) translateY(-100px)';
+            
             setTimeout(() => {
                 document.getElementById('gate').style.display = 'none';
                 document.getElementById('ui').style.opacity = '1';
                 cfg.active = true;
-                document.getElementById('audio').play();
+                const music = document.getElementById('audio');
+                music.volume = 0.5;
+                music.play().catch(() => console.log("Müzik için etkileşim gerekiyor."));
                 init();
             }, 1000);
         }
 
         function init() {
-            const lb = document.getElementById('lights');
-            for(let i=0; i<35; i++){
-                let b = document.createElement('div');
-                b.className = 'bulb';
-                b.style.color = ['#ff0', '#f33', '#3f3', '#3ff'][i%4];
-                b.style.setProperty('--s', (Math.random()+0.4)+'s');
-                lb.appendChild(b);
+            // IŞIK DİZİSİ OLUŞTURMA
+            const lightBox = document.getElementById('lights');
+            const colors = ['#ff0000', '#ffd700', '#00ff00', '#00f2ff', '#ff00ff'];
+            for(let i=0; i<40; i++){
+                let bulb = document.createElement('div');
+                bulb.className = 'bulb';
+                bulb.style.color = colors[i % colors.length];
+                bulb.style.setProperty('--s', (Math.random() * 0.7 + 0.3) + 's');
+                lightBox.appendChild(bulb);
             }
-            for(let i=0; i<180; i++) cfg.snow.push({x: Math.random()*innerWidth, y: Math.random()*innerHeight, r: Math.random()*2+1, s: Math.random()*1+0.5});
+
+            // KAR TANELERİ OLUŞTURMA
+            for(let i=0; i<200; i++) {
+                cfg.snow.push({
+                    x: Math.random() * innerWidth, 
+                    y: Math.random() * innerHeight, 
+                    r: Math.random() * 3 + 1, 
+                    s: Math.random() * 2 + 0.5,
+                    o: Math.random()
+                });
+            }
             loop();
         }
 
+        // HAVAI FIŞEK VE EKRAN SARSINTISI
         function spawnFirework(e) {
             if(!cfg.active) return;
             createExplosion(e.clientX, e.clientY);
+            
+            // Ekran sarsıntısı efekti
+            document.body.style.transform = `translate(${(Math.random()-0.5)*20}px, ${(Math.random()-0.5)*20}px)`;
+            setTimeout(() => document.body.style.transform = 'translate(0,0)', 60);
         }
 
+        window.addEventListener('mousedown', (e) => spawnFirework(e));
+
         function createExplosion(x, y) {
-            const clr = `hsl(${Math.random()*360}, 100%, 65%)`;
-            for(let i=0; i<70; i++) {
+            const hue = Math.random() * 360;
+            const clr = `hsl(${hue}, 100%, 60%)`;
+            for(let i=0; i<80; i++) {
                 cfg.fireworks.push({
-                    x: x, y: y,
-                    vx: (Math.random()-0.5)*14,
-                    vy: (Math.random()-0.5)*14,
-                    alpha: 1, color: clr,
-                    size: Math.random()*3+1
+                    x: x, 
+                    y: y,
+                    vx: (Math.random() - 0.5) * 16,
+                    vy: (Math.random() - 0.5) * 16,
+                    alpha: 1, 
+                    color: clr,
+                    size: Math.random() * 4 + 1,
+                    gravity: 0.15
                 });
             }
         }
 
         function loop() {
-            sCtx.canvas.width = fCtx.canvas.width = innerWidth;
-            sCtx.canvas.height = fCtx.canvas.height = innerHeight;
+            const w = innerWidth;
+            const h = innerHeight;
+            sCtx.canvas.width = fCtx.canvas.width = w;
+            sCtx.canvas.height = fCtx.canvas.height = h;
 
-            sCtx.clearRect(0,0,innerWidth, innerHeight);
+            // KAR ÇİZİMİ
+            sCtx.clearRect(0, 0, w, h);
             sCtx.fillStyle = "rgba(255, 255, 255, 0.8)";
             cfg.snow.forEach(p => {
-                sCtx.beginPath(); sCtx.arc(p.x, p.y, p.r, 0, Math.PI*2); sCtx.fill();
-                p.y += p.s; if(p.y > innerHeight) p.y = -10;
+                sCtx.beginPath();
+                sCtx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+                sCtx.fill();
+                p.y += p.s;
+                p.x += Math.sin(p.y / 50); // Hafif rüzgar etkisi
+                if(p.y > h) { p.y = -10; p.x = Math.random() * w; }
             });
 
-            fCtx.clearRect(0,0,innerWidth, innerHeight);
+            // HAVAI FIŞEK ÇİZİMİ
+            fCtx.clearRect(0, 0, w, h);
             cfg.fireworks.forEach((p, i) => {
-                p.x += p.vx; p.y += p.vy; p.vy += 0.15; p.alpha -= 0.012;
+                p.x += p.vx; 
+                p.y += p.vy; 
+                p.vy += p.gravity; 
+                p.alpha -= 0.012;
+                
                 fCtx.globalAlpha = p.alpha;
                 fCtx.fillStyle = p.color;
-                fCtx.shadowBlur = 10;
+                fCtx.shadowBlur = 15;
                 fCtx.shadowColor = p.color;
-                fCtx.beginPath(); fCtx.arc(p.x, p.y, p.size, 0, Math.PI*2); fCtx.fill();
+                
+                fCtx.beginPath();
+                fCtx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                fCtx.fill();
+                
                 if(p.alpha <= 0) cfg.fireworks.splice(i, 1);
             });
 
+            // SAYAÇ MANTIĞI
             const now = new Date().getTime();
-            const d = cfg.target - now;
-            if(d > 0) {
-                document.getElementById('d').innerText = String(Math.floor(d/86400000)).padStart(2, '0');
-                document.getElementById('h').innerText = String(Math.floor((d%86400000)/3600000)).padStart(2, '0');
-                document.getElementById('m').innerText = String(Math.floor((d%3600000)/60000)).padStart(2, '0');
-                document.getElementById('s').innerText = String(Math.floor((d%60000)/1000)).padStart(2, '0');
+            const diff = cfg.target - now;
+
+            if(diff > 0) {
+                document.getElementById('d').innerText = String(Math.floor(diff / 86400000)).padStart(2, '0');
+                document.getElementById('h').innerText = String(Math.floor((diff % 86400000) / 3600000)).padStart(2, '0');
+                document.getElementById('m').innerText = String(Math.floor((diff % 3600000) / 60000)).padStart(2, '0');
+                document.getElementById('s').innerText = String(Math.floor((diff % 60000) / 1000)).padStart(2, '0');
                 
-                if(d < 10000) {
-                    document.getElementById('y-glow').style.filter = `drop-shadow(0 0 ${Math.random()*60}px red)`;
-                    if(Math.random() > 0.8) createExplosion(Math.random()*innerWidth, Math.random()*innerHeight);
+                // SON 10 SANİYE WARP/KAOS EFEKTİ
+                if(diff < 10000) {
+                    document.getElementById('y-glow').style.filter = `drop-shadow(0 0 ${Math.random()*60}px red) contrast(1.5)`;
+                    if(Math.random() > 0.8) createExplosion(Math.random() * w, Math.random() * h);
                 }
             } else {
+                // FİNAL EKRANI TETİKLEME
                 document.getElementById('finale').style.display = 'flex';
                 document.getElementById('f-msg').innerText = "Mutlu Yıllar " + cfg.name + "!";
-                if(Math.random() > 0.9) createExplosion(Math.random()*innerWidth, Math.random()*innerHeight);
+                if(Math.random() > 0.85) createExplosion(Math.random() * w, Math.random() * h);
             }
+
             requestAnimationFrame(loop);
         }
+
+        // PENCERE BOYUTU DEĞİŞİNCE KARLARI SIFIRLAMA
+        window.addEventListener('resize', () => {
+            sCtx.canvas.width = innerWidth;
+            sCtx.canvas.height = innerHeight;
+        });
     </script>
 </body>
 </html>
